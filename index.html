@@ -4,25 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CINEMAX HD - Movie Requests</title>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Dark/Light Mode & Theme Accents -->
     <div class="bg-glow-red"></div>
     <div class="bg-glow-gold"></div>
 
     <div class="container">
-        <!-- 1. Hero Section -->
+        
         <header class="hero-section">
             <h1 class="logo">CINEMAX <span>HD</span></h1>
             <p class="subtitle">Request Your Favorite Movies & TV Series</p>
             <a href="#requestForm" class="btn-primary">Request Now</a>
         </header>
 
-        <!-- 2. Movie Request Form (Glassmorphism) -->
         <section id="requestForm" class="glass-panel">
             <h2>Submit a Request</h2>
             <form id="movieForm">
@@ -57,20 +54,8 @@
                 <p id="successMessage" class="hidden">✅ Your request has been successfully submitted. Thank you for supporting CINEMAX HD.</p>
             </form>
         </section>
-        
-        <!-- Footer -->
-        <footer>
-            <h3>CINEMAX HD</h3>
-            <p>Owner: Mr. Kavindu Kaushalya</p>
-            <p>&copy; 2026 CINEMAX HD. All Rights Reserved.</p>
-        </footer>
-    </div>
 
-    <!-- Firebase SDKs & Custom JS will go here -->
-    <script src="app.js"></script>
-</body>
-</html>
-<section class="glass-panel search-section">
+        <section class="glass-panel search-section">
             <h2>🔍 Search Existing Requests</h2>
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="Search for a movie or TV series...">
@@ -139,3 +124,15 @@
                 <li>✔️ 100% Mobile Friendly & Secure</li>
             </ul>
         </section>
+
+        <footer>
+            <h3>CINEMAX HD</h3>
+            <p>Owner: Mr. Kavindu Kaushalya</p>
+            <p>&copy; 2026 CINEMAX HD. All Rights Reserved.</p>
+        </footer>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
