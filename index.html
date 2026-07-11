@@ -68,10 +68,23 @@
             </form>
         </section>
 
-        <!-- Live Firebase Latest Requests -->
+      <!-- Live Firebase Latest Requests -->
         <section class="latest-movies fade-up">
             <h2 class="section-title">🔥 Live Latest Requests</h2>
             <p style="text-align: center; color: #aaa; margin-bottom:20px;">Real-time updates from our users!</p>
+            
+            <!-- 🟢 NEW: Live Search & Filters 🟢 -->
+            <div class="search-filter-container">
+                <input type="text" id="searchInput" placeholder="🔍 Search requested movies...">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="English">English</button>
+                    <button class="filter-btn" data-filter="Sinhala Dubbed">Sinhala Dubbed</button>
+                    <button class="filter-btn" data-filter="Tamil">Tamil</button>
+                    <button class="filter-btn" data-filter="Hindi">Hindi</button>
+                </div>
+            </div>
+
             <div class="movie-grid" id="moviesList">
                 <p style="text-align: center; color: #fff; grid-column: 1/-1;">Loading latest requests...</p>
             </div>
