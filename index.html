@@ -9,25 +9,29 @@
 </head>
 <body>
 
-    <!-- 🟢 Technology Preloader Screen 🟢 -->
+    <!-- Preloader -->
     <div id="preloader">
         <div class="tech-loader"></div>
         <div class="loading-text">CINEMAX <span>HD</span></div>
     </div>
 
-    <!-- Background Accents -->
+    <!-- Background Accents & Particles -->
     <div class="bg-glow-red"></div>
     <div class="bg-glow-gold"></div>
+    <div id="particles-container"></div> <!-- 🟢 Particles 🟢 -->
+
+    <!-- 🟢 Toast Notification 🟢 -->
+    <div id="toast">✅ Request Submitted Successfully!</div>
 
     <div class="container">
         
-        <header class="hero-section">
+        <header class="hero-section fade-up">
             <h1 class="logo">CINEMAX <span>HD</span></h1>
             <p class="subtitle">Request Your Favorite Movies & TV Series</p>
             <a href="#requestForm" class="btn-primary">Request Now</a>
         </header>
 
-        <section id="requestForm" class="glass-panel">
+        <section id="requestForm" class="glass-panel fade-up">
             <h2>Submit a Request</h2>
             <form id="movieForm">
                 <div class="input-group">
@@ -58,43 +62,21 @@
                     </div>
                 </div>
                 <button type="submit" class="btn-submit">Submit Request</button>
-                <p id="successMessage" class="hidden">✅ Your request has been successfully submitted. Thank you for supporting CINEMAX HD.</p>
             </form>
         </section>
 
-        <!-- Search Section -->
-        <section class="glass-panel search-section">
-            <h2>🔍 Search Existing Requests</h2>
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search for a movie or TV series...">
-                <button class="btn-primary">Search</button>
-            </div>
-        </section>
-
-        <!-- Latest Requested Movies -->
-        <section class="latest-movies">
-            <h2 class="section-title">🔥 Latest Requests</h2>
+        <!-- 🟢 Live Firebase Latest Requests 🟢 -->
+        <section class="latest-movies fade-up">
+            <h2 class="section-title">🔥 Live Latest Requests</h2>
+            <p style="text-align: center; color: #aaa; margin-bottom:20px;">Real-time updates from our users!</p>
             <div class="movie-grid" id="moviesList">
-                <div class="movie-card glass-panel">
-                    <h3>Deadpool & Wolverine</h3>
-                    <p>2024 • English</p>
-                    <span class="status pending">Pending</span>
-                </div>
-                <div class="movie-card glass-panel">
-                    <h3>Kalki 2898 AD</h3>
-                    <p>2024 • Sinhala Dubbed</p>
-                    <span class="status completed">Completed</span>
-                </div>
-                <div class="movie-card glass-panel">
-                    <h3>Stranger Things</h3>
-                    <p>TV Series • English</p>
-                    <span class="status pending">Pending</span>
-                </div>
+                <!-- Data will auto-load here from Firebase -->
+                <p style="text-align: center; color: #fff; grid-column: 1/-1;">Loading latest requests...</p>
             </div>
         </section>
 
         <!-- Community Links Section -->
-        <section class="community-links">
+        <section class="community-links fade-up">
             <h2 class="section-title">💬 Join Our Community</h2>
             <div class="links-grid">
                 <div class="link-card glass-panel">
@@ -125,19 +107,8 @@
             </div>
         </section>
 
-        <!-- Features Section -->
-        <section class="features-section glass-panel">
-            <h2>⚡ Why CINEMAX HD?</h2>
-            <ul class="features-list">
-                <li>✔️ Fast Movie Requests</li>
-                <li>✔️ TV Series & SinhalaDub Requests</li>
-                <li>✔️ Easy WhatsApp Community Access</li>
-                <li>✔️ 100% Mobile Friendly & Secure</li>
-            </ul>
-        </section>
-
         <!-- Footer -->
-        <footer>
+        <footer class="fade-up">
             <h3>CINEMAX HD</h3>
             <p>Owner: Mr. Kavindu Kaushalya</p>
             <p>&copy; 2026 CINEMAX HD. All Rights Reserved.</p>
@@ -145,21 +116,11 @@
 
     </div>
 
-    <!-- Firebase SDK Links -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     
-    <!-- App JS (Database) -->
+    <!-- Main Script File -->
     <script src="app.js"></script>
-
-    <!-- 🟢 Preloader Script 🟢 -->
-    <script>
-        // පිටුව ලෝඩ් වූ පසු තත්පර 1.5ක් (1500ms) ලෝඩින් එක පෙන්වා ඉවත් කිරීම
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                document.getElementById('preloader').classList.add('hide-loader');
-            }, 1500); // ඔයාට ඕනේ නම් මේ 1500 කියන එක 2000 කරලා වෙලාව වැඩි කරන්න පුළුවන්.
-        });
-    </script>
 </body>
 </html>
