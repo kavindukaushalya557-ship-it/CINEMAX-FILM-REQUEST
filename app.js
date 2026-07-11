@@ -73,18 +73,36 @@ document.getElementById('movieForm').addEventListener('submit', async function(e
     }
 });
 
-// 🟢 Fetch Live Requests & Dynamic Status & 3D Tilt 🟢
+// 🟢 Fetch Live Requests, Dynamic Status, 3D Tilt & TMDB POSTERS 🟢
+const TMDB_API_KEY = "ENTER_YOUR_API_KEY_HERE"; // <--- ඔයාගේ API Key එක මෙතන දාන්න
+
+async function fetchPoster(movieName) {
+    if (TMDB_API_KEY === "ENTER_YOUR_API_KEY_HERE") {
+        return "https://via.placeholder.com/500x750/111111/d4af37?text=No+API+Key";
+    }
+    try {
+        const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(movieName)}`);
+        const data = await res.json();
+        if (data.results && data.results.length > 0 && data.results[0].poster_path) {
+            return `https://image.tmdb.org/t/p/w500${data.results[0].poster_path}`;
+        }
+    } catch (error) {
+        console.error("TMDB Error:", error);
+    }
+    return "https://via.placeholder.com/500x750/111111/d4af37?text=No+Poster"; 
+}
+
 function loadLiveRequests() {
     const list = document.getElementById('moviesList');
     
-    db.collection('requests').orderBy('timestamp', 'desc').limit(4).onSnapshot((snapshot) => {
+    db.collection('requests').orderBy('timestamp', 'desc').limit(4).onSnapshot(async (snapshot) => {
         list.innerHTML = ""; 
         if (snapshot.empty) {
             list.innerHTML = "<p style='color: #bbb; text-align:center; grid-column: 1/-1;'>No requests yet.</p>";
             return;
         }
 
-        snapshot.forEach((doc) => {
+        const moviePromises = snapshot.docs.map(async (doc) => {
             const data = doc.data();
             const movieYear = data.year ? data.year : "N/A";
             
@@ -92,15 +110,24 @@ function loadLiveRequests() {
             const statusClass = data.status === 'completed' ? 'completed' : 'pending';
             const statusText = data.status === 'completed' ? 'Completed ✅' : 'Pending ⏳';
             
-            const card = `
-                <div class="movie-card glass-panel tilt-card">
-                    <h3>${data.movieName}</h3>
-                    <p>${movieYear} • ${data.language}</p>
-                    <span class="status ${statusClass}">${statusText}</span>
+            // TMDB එකෙන් පෝස්ටර් එක ගන්නවා
+            const posterUrl = await fetchPoster(data.movieName);
+
+            return `
+                <div class="movie-card tilt-card">
+                    <img src="${posterUrl}" alt="${data.movieName}" class="poster-bg">
+                    <div class="movie-info">
+                        <h3>${data.movieName}</h3>
+                        <p>${movieYear} • ${data.language}</p>
+                        <span class="status ${statusClass}">${statusText}</span>
+                    </div>
                 </div>
             `;
-            list.innerHTML += card;
         });
+
+        // කාඩ් ඔක්කොම ලෝඩ් වෙනකම් ඉඳලා පෙන්නන්න (Promis.all)
+        const movieCards = await Promise.all(moviePromises);
+        list.innerHTML = movieCards.join("");
 
         // Initialize 3D Tilt for dynamically loaded cards
         VanillaTilt.init(document.querySelectorAll(".tilt-card"), {
