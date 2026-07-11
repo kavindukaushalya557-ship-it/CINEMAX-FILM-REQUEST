@@ -10,13 +10,11 @@
 </head>
 <body>
 
-    <!-- Preloader -->
     <div id="preloader">
         <div class="tech-loader"></div>
         <div class="loading-text">CINEMAX <span>HD</span></div>
     </div>
 
-    <!-- 🟢 Cinematic Ticker 🟢 -->
     <div class="ticker-wrap">
         <div class="ticker">
             🔥 Welcome to CINEMAX HD! Request your favorite Movies and TV Series now. ⚡ Fast Uploads ⚡ Sinhala Dubbed ⚡ TV Series ⚡ Exclusive Community. Enjoy the premium experience! 🍿
@@ -46,9 +44,11 @@
                     <label>WhatsApp Number *</label>
                     <input type="text" id="waNumber" required placeholder="07X XXX XXXX">
                 </div>
-                <div class="input-group">
+                
+                <div class="input-group" style="position: relative;">
                     <label>Movie or TV Series Name *</label>
-                    <input type="text" id="movieName" required placeholder="e.g. Interstellar">
+                    <input type="text" id="movieName" required autocomplete="off" placeholder="e.g. Interstellar">
+                    <ul id="suggestionsList" class="suggestions-list"></ul>
                 </div>
                 <div class="row">
                     <div class="input-group">
@@ -69,12 +69,10 @@
             </form>
         </section>
 
-      <!-- Live Firebase Latest Requests -->
-        <section class="latest-movies fade-up">
+      <section class="latest-movies fade-up">
             <h2 class="section-title">🔥 Live Latest Requests</h2>
             <p style="text-align: center; color: #aaa; margin-bottom:20px;">Real-time updates from our users!</p>
             
-            <!-- 🟢 NEW: Live Search & Filters 🟢 -->
             <div class="search-filter-container">
                 <input type="text" id="searchInput" placeholder="🔍 Search requested movies...">
                 <div class="filter-buttons">
@@ -87,7 +85,6 @@
             </div>
 
             <div class="movie-grid" id="moviesList">
-                <!-- 🟢 Skeleton Loading Cards 🟢 -->
                 <div class="skeleton-card"></div>
                 <div class="skeleton-card"></div>
                 <div class="skeleton-card"></div>
@@ -95,7 +92,6 @@
             </div>
         </section>
 
-        <!-- Community Links Section (With 3D Tilt) -->
         <section class="community-links fade-up">
             <h2 class="section-title">💬 Join Our Community</h2>
             <div class="links-grid">
@@ -123,22 +119,18 @@
             </div>
         </section>
 
-        <!-- 🟢 Animated Statistics Section 🟢 -->
         <section class="stats-section fade-up">
             <div class="stats-grid">
-                <!-- Stat 1 -->
                 <div class="stat-card glass-panel" data-tilt data-tilt-scale="1.05">
                     <div class="stat-icon">📥</div>
                     <h3 class="counter" data-target="1500">0</h3>
                     <p>Total Requests</p>
                 </div>
-                <!-- Stat 2 -->
                 <div class="stat-card glass-panel" data-tilt data-tilt-scale="1.05">
                     <div class="stat-icon">🎬</div>
                     <h3 class="counter" data-target="850">0</h3>
                     <p>Movies Added</p>
                 </div>
-                <!-- Stat 3 -->
                 <div class="stat-card glass-panel" data-tilt data-tilt-scale="1.05">
                     <div class="stat-icon">👥</div>
                     <h3 class="counter" data-target="3200">0</h3>
@@ -180,10 +172,8 @@
         </footer>
     </div>
 
-    <!-- 🟢 Back to Top Button 🟢 -->
     <button id="backToTop" title="Go to top">↑</button>
 
-    <!-- 🟢 Movie Details & Trailer Modal (Popup) - දැන් මේක Script එකට උඩින්! 🟢 -->
     <div id="movieModal" class="modal">
         <div class="modal-content glass-panel">
             <span class="close-btn">&times;</span>
@@ -201,14 +191,11 @@
         </div>
     </div>
 
-    <!-- 🟢 Vanilla Tilt JS for 3D Effect 🟢 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     
-    <!-- Main Script File (අන්තිමටම තියෙන්න ඕනේ මේකයි) -->
     <script src="app.js"></script>
     
 </body>
