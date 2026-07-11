@@ -353,7 +353,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const list = document.getElementById('moviesList');
         if (!list) return;
 
-        db.collection('requests').orderBy('timestamp', 'desc').limit(12).onSnapshot(async (snapshot) => {
+        db.collection('requests').orderBy('timestamp', 'desc').limit(09).onSnapshot(async (snapshot) => {
             if (snapshot.empty) {
                 list.innerHTML = "<p style='color: #bbb; text-align:center; grid-column: 1/-1;'>No requests yet.</p>";
                 return;
