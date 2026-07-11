@@ -12,6 +12,12 @@
 </head>
 <body>
 
+    <!-- 🔥 1. Custom Glowing Cursor 🔥 -->
+    <div id="custom-cursor"></div>
+
+    <!-- 🔥 2. Theme Toggle Button 🔥 -->
+    <button id="themeToggle" class="theme-btn" title="Toggle Light/Dark Mode">☀️</button>
+
     <!-- Preloader -->
     <div id="preloader">
         <div class="tech-loader"></div>
@@ -37,7 +43,8 @@
         <!-- Hero Header Section -->
         <header class="hero-section fade-up">
             <h1 class="logo">CINEMAX <span>HD</span></h1>
-            <p class="subtitle">Request Your Favorite Movies & TV Series</p>
+            <!-- 🔥 3. Auto Typing Text මෙතනට එනවා 🔥 -->
+            <p class="subtitle" id="typing-text"></p>
             <a href="#requestForm" class="btn-primary"><i class="fas fa-paper-plane"></i> Request Now</a>
         </header>
 
@@ -82,7 +89,7 @@
         <!-- Live Requests & Filters Area -->
         <section class="latest-movies fade-up">
             <h2 class="section-title"><i class="fas fa-play-circle"></i> Live Latest Requests</h2>
-            <p style="text-align: center; color: #aaa; margin-bottom:20px;">Real-time updates from our users!</p>
+            <p style="text-align: center; color: var(--text-color); opacity: 0.8; margin-bottom:20px;">Real-time updates from our users!</p>
             
             <div class="search-filter-container">
                 <input type="text" id="searchInput" placeholder="🔍 Search requested movies...">
@@ -95,7 +102,6 @@
                 </div>
             </div>
 
-            <!-- Dynamic Target for JavaScript Injection -->
             <div class="movie-grid" id="moviesList">
                 <div class="skeleton-card"></div>
                 <div class="skeleton-card"></div>
@@ -211,6 +217,9 @@
 
     <!-- External Essential Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <!-- 🔥 4. Confetti Library එක 🔥 -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="app.js"></script>
