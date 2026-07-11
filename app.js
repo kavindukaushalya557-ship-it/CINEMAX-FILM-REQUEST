@@ -393,17 +393,21 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    function initFilters() {
-        const searchInput = document.getElementById("searchInput");
-        const filterBtns = document.querySelectorAll(".filter-btn");
-
-        const applyFilters = () => {
-            if (!searchInput) return;
-            const searchText = searchInput.value.toLowerCase();
-            const activeBtn = document.querySelector(".filter-btn.active");
-            const activeFilter = activeBtn ? activeBtn.getAttribute("data-filter") : "all";
-            const cards = document.querySelectorAll(".movie-card");
-
+    // filterMovies function එක ඇතුළේ අන්තිමටම මේක දාන්න
+    const visibleCards = document.querySelectorAll(".movie-card[style*='display: flex']");
+    const noResultsMsg = document.getElementById("noResultsMsg");
+    
+    if (visibleCards.length === 0) {
+        if (!noResultsMsg) {
+            const msg = document.createElement("p");
+            msg.id = "noResultsMsg";
+            msg.style.cssText = "color: #bbb; text-align: center; grid-column: 1/-1; margin-top: 20px;";
+            msg.innerText = "❌ No matching requests found!";
+            list.appendChild(msg);
+        }
+    } else if (noResultsMsg) {
+        noResultsMsg.remove();
+    }
             cards.forEach(card => {
                 const title = card.getAttribute("data-title");
                 const language = card.getAttribute("data-language");
