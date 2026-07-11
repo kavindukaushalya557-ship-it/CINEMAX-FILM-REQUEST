@@ -74,7 +74,7 @@ document.getElementById('movieForm').addEventListener('submit', async function(e
 });
 
 // 🟢 Fetch Live Requests, Dynamic Status, 3D Tilt & TMDB POSTERS 🟢
-const TMDB_API_KEY = "ENTER_YOUR_API_KEY_HERE"; // <--- ඔයාගේ API Key එක මෙතන දාන්න
+const TMDB_API_KEY = "28eab73ece076175064fa2fc6ef60726"; // <--- ඔයාගේ API Key එක මෙතන දාන්න
 
 async function fetchPoster(movieName) {
     if (TMDB_API_KEY === "ENTER_YOUR_API_KEY_HERE") {
