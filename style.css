@@ -408,3 +408,23 @@ body.light-mode #searchInput { background: #fff; color: #000; border: 1px solid 
     0%, 100% { opacity: 1; } 
     50% { opacity: 0; } 
 }
+/* 🔥 Light Mode Form Fixes 🔥 */
+body.light-mode label {
+    color: #111 !important;
+    font-weight: bold;
+}
+body.light-mode .input-group i {
+    color: #e50914 !important;
+}
+body.light-mode input, 
+body.light-mode select {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #ccc !important;
+}
+body.light-mode input::placeholder {
+    color: #888 !important;
+}
+body.light-mode .btn-submit {
+    color: #ffffff !important;
+}
