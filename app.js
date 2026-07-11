@@ -1,4 +1,5 @@
-/** * ==========================================
+/** 
+ * ==========================================
  * 1. CONFIGURATION & SETUP
  * ==========================================
  */
@@ -25,7 +26,8 @@ const PLACEHOLDER_POSTER = "https://placehold.co/500x750/111111/d4af37?text=Load
 const NO_IMG_POSTER = "https://placehold.co/40x60/111111/d4af37?text=No+Img";
 
 
-/** * ==========================================
+/** 
+ * ==========================================
  * 2. UTILITY & HELPER FUNCTIONS
  * ==========================================
  */
@@ -62,7 +64,8 @@ async function fetchPoster(movieName) {
 }
 
 
-/** * ==========================================
+/** 
+ * ==========================================
  * 3. MODAL & GLOBAL ACTIONS
  * ==========================================
  */
@@ -115,7 +118,8 @@ window.closeModal = function() {
 };
 
 
-/** * ==========================================
+/** 
+ * ==========================================
  * 4. INITIALIZATION & EVENT LISTENERS
  * ==========================================
  */
@@ -123,9 +127,9 @@ window.closeModal = function() {
 document.addEventListener("DOMContentLoaded", function() {  
 
     initPreloader();
-    initThemeToggle();    // 🔥 අලුත් Theme Toggle එක
-    initCustomCursor();   // 🔥 අලුත් Glowing Cursor එක
-    initTypingEffect();   // 🔥 අලුත් Auto Typing එක
+    initThemeToggle();    
+    initCustomCursor();   
+    initTypingEffect();   
     initParticles();
     initScrollAnimations();
     initAutoSuggest();
@@ -137,7 +141,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // --- Sub-functions for cleaner initialization ---
 
-    // 🔥 1. Theme Toggle Logic 🔥
     function initThemeToggle() {
         const themeToggle = document.getElementById("themeToggle");
         if (!themeToggle) return;
@@ -158,7 +161,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // 🔥 2. Custom Cursor Logic 🔥
     function initCustomCursor() {
         const cursor = document.getElementById('custom-cursor');
         if (!cursor) return;
@@ -168,7 +170,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // 🔥 3. Auto Typing Logic 🔥
     function initTypingEffect() {
         const textToType = "Request Your Favorite Movies & TV Series";
         const typingElement = document.getElementById("typing-text");
@@ -330,7 +331,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 window.showToast("✅ Request Submitted Successfully!");
                 movieForm.reset();
 
-                // 🔥 4. Celebration Confetti Animation! 🔥
                 if(typeof confetti === "function") {
                     confetti({
                         particleCount: 150,
@@ -393,6 +393,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // 🔥 සර්ච් කරද්දී මුකුත් නැත්නම් පණිවිඩයක් පෙන්වීම මෙතන තියෙනවා 🔥
     function initFilters() {
         const searchInput = document.getElementById("searchInput");
         const filterBtns = document.querySelectorAll(".filter-btn");
@@ -403,6 +404,8 @@ document.addEventListener("DOMContentLoaded", function() {
             const activeBtn = document.querySelector(".filter-btn.active");
             const activeFilter = activeBtn ? activeBtn.getAttribute("data-filter") : "all";
             const cards = document.querySelectorAll(".movie-card");
+            
+            let visibleCount = 0; // කීයක් පේනවද කියලා ගණන් කරනවා
 
             cards.forEach(card => {
                 const title = card.getAttribute("data-title");
@@ -412,8 +415,29 @@ document.addEventListener("DOMContentLoaded", function() {
                 const matchesSearch = title.includes(searchText);
                 const matchesFilter = activeFilter === "all" || language === activeFilter;
 
-                card.style.display = (matchesSearch && matchesFilter) ? "flex" : "none";
+                if (matchesSearch && matchesFilter) {
+                    card.style.display = "flex";
+                    visibleCount++;
+                } else {
+                    card.style.display = "none";
+                }
             });
+
+            // මුකුත් නැත්නම් පණිවිඩය පෙන්වන කොටස
+            const list = document.getElementById('moviesList');
+            let noResultsMsg = document.getElementById("noResultsMsg");
+            
+            if (visibleCount === 0) {
+                if (!noResultsMsg && list) {
+                    noResultsMsg = document.createElement("p");
+                    noResultsMsg.id = "noResultsMsg";
+                    noResultsMsg.style.cssText = "color: var(--text-color); font-weight: bold; text-align: center; grid-column: 1/-1; margin-top: 20px;";
+                    noResultsMsg.innerHTML = "❌ No matching requests found! 🍿";
+                    list.appendChild(noResultsMsg);
+                }
+            } else if (noResultsMsg) {
+                noResultsMsg.remove();
+            }
         };
 
         if (searchInput) searchInput.addEventListener("input", applyFilters);
