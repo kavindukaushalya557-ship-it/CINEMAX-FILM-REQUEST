@@ -9,6 +9,13 @@
 </head>
 <body>
 
+    <!-- 🟢 Technology Preloader Screen 🟢 -->
+    <div id="preloader">
+        <div class="tech-loader"></div>
+        <div class="loading-text">CINEMAX <span>HD</span></div>
+    </div>
+
+    <!-- Background Accents -->
     <div class="bg-glow-red"></div>
     <div class="bg-glow-gold"></div>
 
@@ -138,10 +145,21 @@
 
     </div>
 
-    <!-- 🟢 Firebase SDK Links 🟢 -->
+    <!-- Firebase SDK Links -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <!-- 🟢 Custom JS (ඔයාගේ app.js එක අනිවාර්යයෙන්ම යටින්ම තියෙන්න ඕනේ) 🟢 -->
+    
+    <!-- App JS (Database) -->
     <script src="app.js"></script>
+
+    <!-- 🟢 Preloader Script 🟢 -->
+    <script>
+        // පිටුව ලෝඩ් වූ පසු තත්පර 1.5ක් (1500ms) ලෝඩින් එක පෙන්වා ඉවත් කිරීම
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('preloader').classList.add('hide-loader');
+            }, 1500); // ඔයාට ඕනේ නම් මේ 1500 කියන එක 2000 කරලා වෙලාව වැඩි කරන්න පුළුවන්.
+        });
+    </script>
 </body>
 </html>
