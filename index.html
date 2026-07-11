@@ -4,55 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CINEMAX HD - Movie Requests</title>
+    <!-- Google Fonts & Font Awesome Icons for Premium UI -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="https://fav.farm/🍿" />
 </head>
 <body>
 
+    <!-- Preloader -->
     <div id="preloader">
         <div class="tech-loader"></div>
         <div class="loading-text">CINEMAX <span>HD</span></div>
     </div>
 
+    <!-- Live Ticker News Bar -->
     <div class="ticker-wrap">
         <div class="ticker">
-            🔥 Welcome to CINEMAX HD! Request your favorite Movies and TV Series now. ⚡ Fast Uploads ⚡ Sinhala Dubbed ⚡ TV Series ⚡ Exclusive Community. Enjoy the premium experience! 🍿
+            <i class="fas fa-fire text-danger"></i> Welcome to CINEMAX HD! Request your favorite Movies and TV Series now. <i class="fas fa-bolt"></i> Fast Uploads <i class="fas fa-bolt"></i> Sinhala Dubbed <i class="fas fa-bolt"></i> TV Series <i class="fas fa-bolt"></i> Exclusive Community. Enjoy the premium experience! 🍿
         </div>
     </div>
 
+    <!-- Background Cinematic Glow Effects -->
     <div class="bg-glow-red"></div>
     <div class="bg-glow-gold"></div>
     <div id="particles-container"></div>
-    <div id="toast">✅ Request Submitted Successfully!</div>
+    
+    <!-- Toast Alert Notification -->
+    <div id="toast"><i class="fas fa-check-circle"></i> Request Submitted Successfully!</div>
 
     <div class="container">
+        <!-- Hero Header Section -->
         <header class="hero-section fade-up">
             <h1 class="logo">CINEMAX <span>HD</span></h1>
             <p class="subtitle">Request Your Favorite Movies & TV Series</p>
-            <a href="#requestForm" class="btn-primary">Request Now</a>
+            <a href="#requestForm" class="btn-primary"><i class="fas fa-paper-plane"></i> Request Now</a>
         </header>
 
+        <!-- Main Movie Request Form -->
         <section id="requestForm" class="glass-panel fade-up">
-            <h2>Submit a Request</h2>
+            <h2><i class="fas fa-edit"></i> Submit a Request</h2>
             <form id="movieForm">
                 <div class="input-group">
-                    <label>Full Name (Optional)</label>
+                    <label><i class="fas fa-user-circle"></i> Full Name (Optional)</label>
                     <input type="text" id="fullName" placeholder="Enter your name">
                 </div>
                 <div class="input-group">
-                    <label>WhatsApp Number *</label>
+                    <label><i class="fab fa-whatsapp"></i> WhatsApp Number *</label>
                     <input type="text" id="waNumber" required placeholder="07X XXX XXXX">
                 </div>
                 
                 <div class="input-group" style="position: relative;">
-                    <label>Movie or TV Series Name *</label>
+                    <label><i class="fas fa-film"></i> Movie or TV Series Name *</label>
                     <input type="text" id="movieName" required autocomplete="off" placeholder="e.g. Interstellar">
                     <ul id="suggestionsList" class="suggestions-list"></ul>
                 </div>
+                
                 <div class="row">
                     <div class="input-group">
-                        <label>Language</label>
+                        <label><i class="fas fa-language"></i> Language</label>
                         <select id="language">
                             <option>English</option>
                             <option>Sinhala Dubbed</option>
@@ -61,16 +71,17 @@
                         </select>
                     </div>
                     <div class="input-group">
-                        <label>Release Year</label>
+                        <label><i class="fas fa-calendar-alt"></i> Release Year</label>
                         <input type="number" id="year" placeholder="e.g. 2014">
                     </div>
                 </div>
-                <button type="submit" class="btn-submit">Submit Request</button>
+                <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Submit Request</button>
             </form>
         </section>
 
-      <section class="latest-movies fade-up">
-            <h2 class="section-title">🔥 Live Latest Requests</h2>
+        <!-- Live Requests & Filters Area -->
+        <section class="latest-movies fade-up">
+            <h2 class="section-title"><i class="fas fa-play-circle"></i> Live Latest Requests</h2>
             <p style="text-align: center; color: #aaa; margin-bottom:20px;">Real-time updates from our users!</p>
             
             <div class="search-filter-container">
@@ -84,6 +95,7 @@
                 </div>
             </div>
 
+            <!-- Dynamic Target for JavaScript Injection -->
             <div class="movie-grid" id="moviesList">
                 <div class="skeleton-card"></div>
                 <div class="skeleton-card"></div>
@@ -92,79 +104,83 @@
             </div>
         </section>
 
+        <!-- WhatsApp Community Links Matrix -->
         <section class="community-links fade-up">
-            <h2 class="section-title">💬 Join Our Community</h2>
+            <h2 class="section-title"><i class="fas fa-users"></i> Join Our Community</h2>
             <div class="links-grid">
                 <div class="link-card glass-panel" data-tilt data-tilt-scale="1.05" data-tilt-glare="true" data-tilt-max-glare="0.5">
-                    <h3>🎬 Movie Group 1</h3>
-                    <a href="https://chat.whatsapp.com/GyxIrEzCP6BAnClqZqTFen" target="_blank" class="btn-wa">Join WhatsApp</a>
+                    <h3><i class="fas fa-film"></i> Movie Group 1</h3>
+                    <a href="https://chat.whatsapp.com/GyxIrEzCP6BAnClqZqTFen" target="_blank" class="btn-wa"><i class="fab fa-whatsapp"></i> Join WhatsApp</a>
                 </div>
                 <div class="link-card glass-panel" data-tilt data-tilt-scale="1.05" data-tilt-glare="true" data-tilt-max-glare="0.5">
-                    <h3>🎬 Movie Group 2</h3>
-                    <a href="https://chat.whatsapp.com/Iir4FNY2cqx2TAx4sN8zsl" target="_blank" class="btn-wa">Join WhatsApp</a>
+                    <h3><i class="fas fa-film"></i> Movie Group 2</h3>
+                    <a href="https://chat.whatsapp.com/Iir4FNY2cqx2TAx4sN8zsl" target="_blank" class="btn-wa"><i class="fab fa-whatsapp"></i> Join WhatsApp</a>
                 </div>
                 <div class="link-card glass-panel" data-tilt data-tilt-scale="1.05" data-tilt-glare="true" data-tilt-max-glare="0.5">
-                    <h3>📺 TV Series</h3>
-                    <a href="https://chat.whatsapp.com/IcjVWaOg52IJaX75pAQJr2" target="_blank" class="btn-wa">Join WhatsApp</a>
+                    <h3><i class="fas fa-tv"></i> TV Series</h3>
+                    <a href="https://chat.whatsapp.com/IcjVWaOg52IJaX75pAQJr2" target="_blank" class="btn-wa"><i class="fab fa-whatsapp"></i> Join WhatsApp</a>
                 </div>
                 <div class="link-card glass-panel" data-tilt data-tilt-scale="1.05" data-tilt-glare="true" data-tilt-max-glare="0.5">
-                    <h3>🎬 SinhalaDub</h3>
-                    <a href="https://chat.whatsapp.com/FE3rq49Qi3y3tomvsldHng" target="_blank" class="btn-wa">Join WhatsApp</a>
+                    <h3><i class="fas fa-microphone"></i> SinhalaDub</h3>
+                    <a href="https://chat.whatsapp.com/FE3rq49Qi3y3tomvsldHng" target="_blank" class="btn-wa"><i class="fab fa-whatsapp"></i> Join WhatsApp</a>
                 </div>
                 <div class="link-card glass-panel channel-card" data-tilt data-tilt-scale="1.02" data-tilt-glare="true" data-tilt-max-glare="0.3">
-                    <h3>📢 Official Channel</h3>
+                    <h3><i class="fas fa-bullhorn"></i> Official Channel</h3>
                     <p>Get the latest updates directly!</p>
-                    <a href="https://whatsapp.com/channel/0029Vb6oAn2EquiVw3u3Y63q/184" target="_blank" class="btn-wa-channel">Follow Channel</a>
+                    <a href="https://whatsapp.com/channel/0029Vb6oAn2EquiVw3u3Y63q/184" target="_blank" class="btn-wa-channel"><i class="fas fa-bell"></i> Follow Channel</a>
                 </div>
             </div>
         </section>
 
+        <!-- Live Statistics Counter -->
         <section class="stats-section fade-up">
             <div class="stats-grid">
                 <div class="stat-card glass-panel" data-tilt data-tilt-scale="1.05">
-                    <div class="stat-icon">📥</div>
+                    <div class="stat-icon"><i class="fas fa-cloud-download-alt"></i></div>
                     <h3 class="counter" data-target="1500">0</h3>
                     <p>Total Requests</p>
                 </div>
                 <div class="stat-card glass-panel" data-tilt data-tilt-scale="1.05">
-                    <div class="stat-icon">🎬</div>
+                    <div class="stat-icon"><i class="fas fa-video"></i></div>
                     <h3 class="counter" data-target="850">0</h3>
                     <p>Movies Added</p>
                 </div>
                 <div class="stat-card glass-panel" data-tilt data-tilt-scale="1.05">
-                    <div class="stat-icon">👥</div>
+                    <div class="stat-icon"><i class="fas fa-user-friends"></i></div>
                     <h3 class="counter" data-target="3200">0</h3>
                     <p>Active Members</p>
                 </div>
             </div>
         </section> 
 
+        <!-- Core Features Section -->
         <section class="features-section fade-up">
-            <h2 class="section-title">⚡ Why CINEMAX HD?</h2>
+            <h2 class="section-title"><i class="fas fa-star"></i> Why CINEMAX HD?</h2>
             <div class="features-grid">
                 <div class="feature-card glass-panel" data-tilt data-tilt-scale="1.05" data-tilt-glare="true" data-tilt-max-glare="0.3">
-                    <div class="feature-icon">🚀</div>
+                    <div class="feature-icon"><i class="fas fa-bolt"></i></div>
                     <h3>Fast Requests</h3>
                     <p>Get your favorite movies & TV series uploaded in record time.</p>
                 </div>
                 <div class="feature-card glass-panel" data-tilt data-tilt-scale="1.05" data-tilt-glare="true" data-tilt-max-glare="0.3">
-                    <div class="feature-icon">🎙️</div>
+                    <div class="feature-icon"><i class="fas fa-headset"></i></div>
                     <h3>Sinhala Dubbed</h3>
                     <p>Exclusive collection of Sinhala Dubbed movies updated daily.</p>
                 </div>
                 <div class="feature-card glass-panel" data-tilt data-tilt-scale="1.05" data-tilt-glare="true" data-tilt-max-glare="0.3">
-                    <div class="feature-icon">💬</div>
+                    <div class="feature-icon"><i class="fas fa-comments"></i></div>
                     <h3>Active Community</h3>
                     <p>Join thousands of active movie lovers in our WhatsApp groups.</p>
                 </div>
                 <div class="feature-card glass-panel" data-tilt data-tilt-scale="1.05" data-tilt-glare="true" data-tilt-max-glare="0.3">
-                    <div class="feature-icon">📱</div>
+                    <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
                     <h3>100% Mobile Friendly</h3>
                     <p>Smooth, fast, and secure requesting experience on any device.</p>
                 </div>
             </div>
         </section>
 
+        <!-- Footer Area -->
         <footer class="fade-up"> 
             <h3>CINEMAX HD</h3>
             <p>Owner: Mr. Kavindu Kaushalya</p>
@@ -172,8 +188,10 @@
         </footer>
     </div>
 
-    <button id="backToTop" title="Go to top">↑</button>
+    <!-- Smooth Back To Top Button -->
+    <button id="backToTop" title="Go to top"><i class="fas fa-chevron-up"></i></button>
 
+    <!-- TMDB Dynamic Movie Popup Modal -->
     <div id="movieModal" class="modal">
         <div class="modal-content glass-panel">
             <span class="close-btn">&times;</span>
@@ -181,7 +199,7 @@
                 <img id="modalPoster" src="" alt="Movie Poster">
                 <div class="modal-info">
                     <h2 id="modalTitle">Loading...</h2>
-                    <p class="modal-rating">⭐ <span id="modalRating">-</span>/10 (TMDB)</p>
+                    <p class="modal-rating"><i class="fas fa-star" style="color: #d4af37;"></i> <span id="modalRating">-</span>/10 (TMDB)</p>
                     <p id="modalPlot" class="modal-plot">Fetching storyline...</p>
                     <div class="trailer-container">
                         <iframe id="modalTrailer" src="" frameborder="0" allowfullscreen></iframe>
@@ -191,11 +209,10 @@
         </div>
     </div>
 
+    <!-- External Essential Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
-
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    
     <script src="app.js"></script>
     
 </body>
