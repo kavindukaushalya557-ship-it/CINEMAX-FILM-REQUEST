@@ -47,6 +47,75 @@ function showToast(message) {
     setTimeout(() => { toast.classList.remove("show"); }, 3500); 
 }
 
+// 🟢 TMDB API Logic 🟢
+const TMDB_API_KEY = "28eab73ece076175064fa2fc6ef60726"; 
+
+// 🟢 Live Auto-Suggest Logic (TMDB API) 🟢
+const movieNameInput = document.getElementById("movieName");
+const suggestionsList = document.getElementById("suggestionsList");
+const yearInput = document.getElementById("year");
+let debounceTimer;
+
+movieNameInput.addEventListener("input", function() {
+    clearTimeout(debounceTimer);
+    const query = this.value.trim();
+    
+    if (query.length < 2) {
+        suggestionsList.style.display = "none";
+        return;
+    }
+
+    debounceTimer = setTimeout(async () => {
+        try {
+            const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`);
+            const data = await res.json();
+            
+            suggestionsList.innerHTML = "";
+            if (data.results && data.results.length > 0) {
+                suggestionsList.style.display = "block";
+                
+                data.results.slice(0, 5).forEach(item => {
+                    if(item.media_type !== 'movie' && item.media_type !== 'tv') return;
+                    
+                    const title = item.title || item.name;
+                    const releaseDate = item.release_date || item.first_air_date || "";
+                    const year = releaseDate.split("-")[0] || "N/A";
+                    const posterUrl = item.poster_path ? `https://image.tmdb.org/t/p/w92${item.poster_path}` : "https://placehold.co/40x60/111111/d4af37?text=No+Img";
+
+                    const li = document.createElement("li");
+                    li.innerHTML = `
+                        <img src="${posterUrl}" alt="poster">
+                        <div class="sugg-info">
+                            <span class="sugg-title">${title}</span>
+                            <span class="sugg-year">${year} • ${item.media_type === 'movie' ? 'Movie' : 'TV Series'}</span>
+                        </div>
+                    `;
+                    
+                    li.addEventListener("click", () => {
+                        movieNameInput.value = title;
+                        yearInput.value = year !== "N/A" ? year : ""; 
+                        suggestionsList.style.display = "none";
+                    });
+                    
+                    suggestionsList.appendChild(li);
+                });
+                
+                if(suggestionsList.innerHTML === "") { suggestionsList.style.display = "none"; }
+            } else {
+                suggestionsList.style.display = "none";
+            }
+        } catch (err) {
+            console.error("Auto-suggest Error:", err);
+        }
+    }, 500); 
+});
+
+document.addEventListener("click", (e) => {
+    if (!movieNameInput.contains(e.target) && !suggestionsList.contains(e.target)) {
+        suggestionsList.style.display = "none";
+    }
+});
+
 // Form Submit
 document.getElementById('movieForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -73,9 +142,6 @@ document.getElementById('movieForm').addEventListener('submit', async function(e
     }
 });
 
-// 🟢 TMDB API Logic 🟢
-const TMDB_API_KEY = "28eab73ece076175064fa2fc6ef60726"; 
-
 async function fetchPoster(movieName) {
     try {
         const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(movieName)}`);
@@ -86,14 +152,14 @@ async function fetchPoster(movieName) {
     } catch (error) {
         console.error("TMDB Error:", error);
     }
-    return "https://via.placeholder.com/500x750/111111/d4af37?text=No+Poster"; 
+    return "https://placehold.co/500x750/111111/d4af37?text=No+Poster"; 
 }
 
-// 🟢 Load Live Requests (Updated for clicking to open modal) 🟢
+// 🟢 Load Live Requests 🟢
 function loadLiveRequests() {
     const list = document.getElementById('moviesList');
     
-    db.collection('requests').orderBy('timestamp', 'desc').limit(09).onSnapshot(async (snapshot) => {
+    db.collection('requests').orderBy('timestamp', 'desc').limit(12).onSnapshot(async (snapshot) => {
         list.innerHTML = ""; 
         if (snapshot.empty) {
             list.innerHTML = "<p style='color: #bbb; text-align:center; grid-column: 1/-1;'>No requests yet.</p>";
@@ -106,7 +172,7 @@ function loadLiveRequests() {
             const statusClass = data.status === 'completed' ? 'completed' : 'pending';
             const statusText = data.status === 'completed' ? 'Completed ✅' : 'Pending ⏳';
             const posterUrl = await fetchPoster(data.movieName);
-            const safeMovieName = data.movieName.replace(/'/g, "&apos;"); // Prevent JS string errors
+            const safeMovieName = data.movieName.replace(/'/g, "&apos;");
 
             return `
                 <div class="movie-card tilt-card" data-title="${data.movieName.toLowerCase()}" data-language="${data.language}" onclick="openMovieModal('${safeMovieName}')" style="cursor: pointer;">
@@ -201,7 +267,7 @@ window.addEventListener("click", (e) => { if (e.target === modal) closeModal(); 
 
 function closeModal() {
     modal.style.display = "none";
-    document.getElementById("modalTrailer").src = ""; // Stop YouTube video when closed
+    document.getElementById("modalTrailer").src = ""; 
 }
 
 async function openMovieModal(movieName) {
@@ -209,7 +275,7 @@ async function openMovieModal(movieName) {
     document.getElementById("modalTitle").innerText = movieName;
     document.getElementById("modalPlot").innerText = "Searching for movie details...";
     document.getElementById("modalRating").innerText = "-";
-    document.getElementById("modalPoster").src = "https://via.placeholder.com/500x750/111111/d4af37?text=Loading...";
+    document.getElementById("modalPoster").src = "https://placehold.co/500x750/111111/d4af37?text=Loading...";
     document.getElementById("modalTrailer").src = ""; 
 
     try {
