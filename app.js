@@ -159,7 +159,7 @@ async function fetchPoster(movieName) {
 function loadLiveRequests() {
     const list = document.getElementById('moviesList');
     
-    db.collection('requests').orderBy('timestamp', 'desc').limit(12).onSnapshot(async (snapshot) => {
+    db.collection('requests').orderBy('timestamp', 'desc').limit(9).onSnapshot(async (snapshot) => {
         list.innerHTML = ""; 
         if (snapshot.empty) {
             list.innerHTML = "<p style='color: #bbb; text-align:center; grid-column: 1/-1;'>No requests yet.</p>";
