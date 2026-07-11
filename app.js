@@ -10,7 +10,7 @@ const firebaseConfig = {
   
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-  
+document.addEventListener("DOMContentLoaded", function() {  
 // Preloader Remove
 window.addEventListener('load', function() {
     setTimeout(() => { document.getElementById('preloader').classList.add('hide-loader'); }, 1500);
@@ -392,3 +392,4 @@ if (aiBtn) {
         }
     });
 }
+});
