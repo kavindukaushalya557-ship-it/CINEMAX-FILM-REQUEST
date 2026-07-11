@@ -73,13 +73,10 @@ document.getElementById('movieForm').addEventListener('submit', async function(e
     }
 });
 
-// 🟢 Fetch Live Requests, Dynamic Status, 3D Tilt & TMDB POSTERS 🟢
-const TMDB_API_KEY = "28eab73ece076175064fa2fc6ef60726"; // <--- ඔයාගේ API Key එක
+// 🟢 TMDB API Logic 🟢
+const TMDB_API_KEY = "28eab73ece076175064fa2fc6ef60726"; 
 
 async function fetchPoster(movieName) {
-    if (TMDB_API_KEY === "ENTER_YOUR_API_KEY_HERE") {
-        return "https://via.placeholder.com/500x750/111111/d4af37?text=No+API+Key";
-    }
     try {
         const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(movieName)}`);
         const data = await res.json();
@@ -92,12 +89,11 @@ async function fetchPoster(movieName) {
     return "https://via.placeholder.com/500x750/111111/d4af37?text=No+Poster"; 
 }
 
-// 🟢 Updated Load Requests with Limit 12 & Data Attributes for Search 🟢
+// 🟢 Load Live Requests (Updated for clicking to open modal) 🟢
 function loadLiveRequests() {
     const list = document.getElementById('moviesList');
     
-    // Limit එක 12ක් කළා Search කරද්දී ගොඩක් ෆිල්ම් පෙන්නන්න ඕන නිසා
-    db.collection('requests').orderBy('timestamp', 'desc').limit(6).onSnapshot(async (snapshot) => {
+    db.collection('requests').orderBy('timestamp', 'desc').limit(12).onSnapshot(async (snapshot) => {
         list.innerHTML = ""; 
         if (snapshot.empty) {
             list.innerHTML = "<p style='color: #bbb; text-align:center; grid-column: 1/-1;'>No requests yet.</p>";
@@ -107,17 +103,13 @@ function loadLiveRequests() {
         const moviePromises = snapshot.docs.map(async (doc) => {
             const data = doc.data();
             const movieYear = data.year ? data.year : "N/A";
-            
-            // Status Logic
             const statusClass = data.status === 'completed' ? 'completed' : 'pending';
             const statusText = data.status === 'completed' ? 'Completed ✅' : 'Pending ⏳';
-            
-            // TMDB එකෙන් පෝස්ටර් එක ගන්නවා
             const posterUrl = await fetchPoster(data.movieName);
+            const safeMovieName = data.movieName.replace(/'/g, "&apos;"); // Prevent JS string errors
 
-            // අලුතින් data-title සහ data-language එකතු කරලා තියෙනවා Search කරන්න ලේසි වෙන්න
             return `
-                <div class="movie-card tilt-card" data-title="${data.movieName.toLowerCase()}" data-language="${data.language}">
+                <div class="movie-card tilt-card" data-title="${data.movieName.toLowerCase()}" data-language="${data.language}" onclick="openMovieModal('${safeMovieName}')" style="cursor: pointer;">
                     <img src="${posterUrl}" alt="${data.movieName}" class="poster-bg">
                     <div class="movie-info">
                         <h3>${data.movieName}</h3>
@@ -128,19 +120,9 @@ function loadLiveRequests() {
             `;
         });
 
-        // කාඩ් ඔක්කොම ලෝඩ් වෙනකම් ඉඳලා පෙන්නන්න (Promis.all)
         const movieCards = await Promise.all(moviePromises);
         list.innerHTML = movieCards.join("");
-
-        // Initialize 3D Tilt for dynamically loaded cards
-        VanillaTilt.init(document.querySelectorAll(".tilt-card"), {
-            max: 15,
-            speed: 400,
-            glare: true,
-            "max-glare": 0.4
-        });
-
-        // ෆිල්ම් ටික ලෝඩ් වුණාට පස්සේ Filter එක රන් කරනවා
+        VanillaTilt.init(document.querySelectorAll(".tilt-card"), { max: 15, speed: 400, glare: true, "max-glare": 0.4 });
         filterMovies();
     });
 }
@@ -148,9 +130,7 @@ loadLiveRequests();
 
 // 🟢 Live Search & Filter Logic 🟢
 const searchInput = document.getElementById("searchInput");
-if(searchInput) {
-    searchInput.addEventListener("input", filterMovies);
-}
+if(searchInput) { searchInput.addEventListener("input", filterMovies); }
 
 document.querySelectorAll(".filter-btn").forEach(btn => {
     btn.addEventListener("click", function() {
@@ -162,8 +142,7 @@ document.querySelectorAll(".filter-btn").forEach(btn => {
 
 function filterMovies() {
     const input = document.getElementById("searchInput");
-    if(!input) return; // HTML එකේ search bar එක නැත්නම් මුකුත් කරන්නේ නෑ
-
+    if(!input) return;
     const searchText = input.value.toLowerCase();
     const activeBtn = document.querySelector(".filter-btn.active");
     const activeFilter = activeBtn ? activeBtn.getAttribute("data-filter") : "all";
@@ -172,60 +151,96 @@ function filterMovies() {
     cards.forEach(card => {
         const title = card.getAttribute("data-title");
         const language = card.getAttribute("data-language");
-        
         const matchesSearch = title.includes(searchText);
         const matchesFilter = activeFilter === "all" || language === activeFilter;
 
-        if (matchesSearch && matchesFilter) {
-            card.style.display = "flex";
-        } else {
-            card.style.display = "none";
-        }
+        card.style.display = (matchesSearch && matchesFilter) ? "flex" : "none";
     });
 }
 
 // 🟢 Back to Top Button Logic 🟢
 const topBtn = document.getElementById("backToTop");
 window.addEventListener('scroll', () => {
-    if (window.scrollY > 300) { topBtn.style.display = "block"; }
-    else { topBtn.style.display = "none"; }
+    topBtn.style.display = (window.scrollY > 300) ? "block" : "none";
 });
-topBtn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+topBtn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
 // 🟢 Animated Counters Logic 🟢
 const counters = document.querySelectorAll('.counter');
-const speed = 100; // ඉලක්කම් කැරකෙන වේගය (අඩුවෙන්න අඩුවෙන්න වේගය වැඩියි)
-
 const animateCounters = () => {
     counters.forEach(counter => {
         const updateCount = () => {
             const target = +counter.getAttribute('data-target');
             const count = +counter.innerText;
-            const inc = target / speed;
-
+            const inc = target / 100;
             if (count < target) {
                 counter.innerText = Math.ceil(count + inc);
-                setTimeout(updateCount, 20); // මිලි තත්පර 20කට සැරයක් අප්ඩේට් වෙනවා
-            } else {
-                counter.innerText = target;
-            }
+                setTimeout(updateCount, 20);
+            } else { counter.innerText = target; }
         };
         updateCount();
     });
 };
-
-// Scroll කරලා ඒ කොටසට එද්දී විතරක් Animation එක වැඩ කරන්න හදමු (Intersection Observer)
 const statsObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             animateCounters();
-            statsObserver.unobserve(entry.target); // එකපාරක් කැරකුණාට පස්සේ නවත්තනවා
+            statsObserver.unobserve(entry.target);
         }
     });
 }, { threshold: 0.5 });
-
 const statsSection = document.querySelector('.stats-section');
-if (statsSection) {
-    statsObserver.observe(statsSection);
+if (statsSection) { statsObserver.observe(statsSection); }
+
+// 🟢 Movie Modal & Trailer Logic (NEW!) 🟢
+const modal = document.getElementById("movieModal");
+const closeBtn = document.querySelector(".close-btn");
+
+closeBtn.addEventListener("click", closeModal);
+window.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+function closeModal() {
+    modal.style.display = "none";
+    document.getElementById("modalTrailer").src = ""; // Stop YouTube video when closed
+}
+
+async function openMovieModal(movieName) {
+    modal.style.display = "flex";
+    document.getElementById("modalTitle").innerText = movieName;
+    document.getElementById("modalPlot").innerText = "Searching for movie details...";
+    document.getElementById("modalRating").innerText = "-";
+    document.getElementById("modalPoster").src = "https://via.placeholder.com/500x750/111111/d4af37?text=Loading...";
+    document.getElementById("modalTrailer").src = ""; 
+
+    try {
+        const searchRes = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(movieName)}`);
+        const searchData = await searchRes.json();
+        
+        if (searchData.results && searchData.results.length > 0) {
+            const movie = searchData.results[0];
+            const mediaType = movie.media_type || "movie";
+            const movieId = movie.id;
+            
+            document.getElementById("modalPlot").innerText = movie.overview || "No synopsis available for this title.";
+            document.getElementById("modalRating").innerText = movie.vote_average ? movie.vote_average.toFixed(1) : "N/A";
+            if (movie.poster_path) {
+                document.getElementById("modalPoster").src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+            }
+
+            const videoRes = await fetch(`https://api.themoviedb.org/3/${mediaType}/${movieId}/videos?api_key=${TMDB_API_KEY}`);
+            const videoData = await videoRes.json();
+            
+            if (videoData.results && videoData.results.length > 0) {
+                const trailer = videoData.results.find(v => v.type === "Trailer" && v.site === "YouTube") || videoData.results.find(v => v.site === "YouTube");
+                if (trailer) {
+                    document.getElementById("modalTrailer").src = `https://www.youtube.com/embed/${trailer.key}?autoplay=1`;
+                }
+            }
+        } else {
+            document.getElementById("modalPlot").innerText = "No details found for this title.";
+        }
+    } catch (error) {
+        console.error("TMDB Details Error:", error);
+        document.getElementById("modalPlot").innerText = "Failed to load movie details.";
+    }
 }
