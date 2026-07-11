@@ -97,7 +97,7 @@ function loadLiveRequests() {
     const list = document.getElementById('moviesList');
     
     // Limit එක 12ක් කළා Search කරද්දී ගොඩක් ෆිල්ම් පෙන්නන්න ඕන නිසා
-    db.collection('requests').orderBy('timestamp', 'desc').limit(12).onSnapshot(async (snapshot) => {
+    db.collection('requests').orderBy('timestamp', 'desc').limit(6).onSnapshot(async (snapshot) => {
         list.innerHTML = ""; 
         if (snapshot.empty) {
             list.innerHTML = "<p style='color: #bbb; text-align:center; grid-column: 1/-1;'>No requests yet.</p>";
