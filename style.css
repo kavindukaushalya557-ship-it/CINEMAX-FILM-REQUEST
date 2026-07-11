@@ -143,3 +143,26 @@ footer h3 { color: white; margin: 5px 0; }
 .stat-card h3::after { content: '+'; font-size: 1.5rem; color: var(--primary-red); margin-left: 5px; }
 .stat-card p { margin: 5px 0 0 0; color: #bbb; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
 .stat-card:hover { border-color: var(--primary-red); box-shadow: 0 8px 25px rgba(229,9,20,0.2); }
+/* 🟢 Movie Details Modal (Popup) 🟢 */
+.modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(8px); justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+.modal-content { position: relative; max-width: 850px; width: 100%; display: flex; gap: 25px; background: rgba(15, 15, 15, 0.95); border: 1px solid var(--primary-red); padding: 30px; border-radius: 20px; animation: modalFadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 15px 40px rgba(229,9,20,0.3); }
+@keyframes modalFadeIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+.close-btn { position: absolute; top: 15px; right: 25px; color: white; font-size: 2.5rem; cursor: pointer; transition: 0.3s; z-index: 10; line-height: 1; }
+.close-btn:hover { color: var(--primary-red); transform: scale(1.1); }
+.modal-body { display: flex; gap: 30px; width: 100%; }
+#modalPoster { width: 220px; height: 330px; border-radius: 12px; object-fit: cover; box-shadow: 0 5px 20px rgba(0,0,0,0.6); }
+.modal-info { flex: 1; display: flex; flex-direction: column; }
+#modalTitle { color: var(--accent-gold); margin: 0 0 10px 0; font-size: 2rem; font-weight: bold; }
+.modal-rating { color: white; font-weight: bold; margin-bottom: 15px; font-size: 1.1rem; }
+.modal-plot { color: #ddd; font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; flex-grow: 1; }
+.trailer-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); }
+.trailer-container iframe { width: 100%; height: 100%; border: none; }
+
+/* ෆෝන් වලින් බලද්දී Popup එක හැදෙන විදිහ */
+@media (max-width: 768px) {
+    .modal-body { flex-direction: column; align-items: center; text-align: center; }
+    #modalPoster { width: 160px; height: 240px; }
+    .modal-content { padding: 25px 15px; max-height: 90vh; overflow-y: auto; flex-direction: column; }
+    .close-btn { top: 5px; right: 15px; }
+    #modalTitle { font-size: 1.5rem; }
+}
