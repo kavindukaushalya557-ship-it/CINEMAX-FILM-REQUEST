@@ -134,3 +134,12 @@ footer h3 { color: white; margin: 5px 0; }
 .filter-btn { padding: 8px 18px; border-radius: 20px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; cursor: pointer; transition: 0.3s; font-size: 0.85rem; }
 .filter-btn:hover { background: rgba(229,9,20,0.5); }
 .filter-btn.active { background: var(--primary-red); border-color: var(--primary-red); font-weight: bold; box-shadow: 0 0 10px rgba(229,9,20,0.5); }
+/* 🟢 Animated Statistics 🟢 */
+.stats-section { margin: 40px auto 60px auto; text-align: center; max-width: 900px; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+.stat-card { padding: 30px 20px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; transition: 0.3s; }
+.stat-icon { font-size: 2.5rem; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(229,9,20,0.5)); }
+.stat-card h3 { font-size: 2.5rem; color: var(--accent-gold); margin: 0; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+.stat-card h3::after { content: '+'; font-size: 1.5rem; color: var(--primary-red); margin-left: 5px; }
+.stat-card p { margin: 5px 0 0 0; color: #bbb; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+.stat-card:hover { border-color: var(--primary-red); box-shadow: 0 8px 25px rgba(229,9,20,0.2); }
