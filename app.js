@@ -74,7 +74,7 @@ document.getElementById('movieForm').addEventListener('submit', async function(e
 });
 
 // 🟢 Fetch Live Requests, Dynamic Status, 3D Tilt & TMDB POSTERS 🟢
-const TMDB_API_KEY = "28eab73ece076175064fa2fc6ef60726"; // <--- ඔයාගේ API Key එක මෙතන දාන්න
+const TMDB_API_KEY = "28eab73ece076175064fa2fc6ef60726"; // <--- ඔයාගේ API Key එක
 
 async function fetchPoster(movieName) {
     if (TMDB_API_KEY === "ENTER_YOUR_API_KEY_HERE") {
@@ -92,10 +92,12 @@ async function fetchPoster(movieName) {
     return "https://via.placeholder.com/500x750/111111/d4af37?text=No+Poster"; 
 }
 
+// 🟢 Updated Load Requests with Limit 12 & Data Attributes for Search 🟢
 function loadLiveRequests() {
     const list = document.getElementById('moviesList');
     
-    db.collection('requests').orderBy('timestamp', 'desc').limit(4).onSnapshot(async (snapshot) => {
+    // Limit එක 12ක් කළා Search කරද්දී ගොඩක් ෆිල්ම් පෙන්නන්න ඕන නිසා
+    db.collection('requests').orderBy('timestamp', 'desc').limit(12).onSnapshot(async (snapshot) => {
         list.innerHTML = ""; 
         if (snapshot.empty) {
             list.innerHTML = "<p style='color: #bbb; text-align:center; grid-column: 1/-1;'>No requests yet.</p>";
@@ -113,8 +115,9 @@ function loadLiveRequests() {
             // TMDB එකෙන් පෝස්ටර් එක ගන්නවා
             const posterUrl = await fetchPoster(data.movieName);
 
+            // අලුතින් data-title සහ data-language එකතු කරලා තියෙනවා Search කරන්න ලේසි වෙන්න
             return `
-                <div class="movie-card tilt-card">
+                <div class="movie-card tilt-card" data-title="${data.movieName.toLowerCase()}" data-language="${data.language}">
                     <img src="${posterUrl}" alt="${data.movieName}" class="poster-bg">
                     <div class="movie-info">
                         <h3>${data.movieName}</h3>
@@ -136,9 +139,50 @@ function loadLiveRequests() {
             glare: true,
             "max-glare": 0.4
         });
+
+        // ෆිල්ම් ටික ලෝඩ් වුණාට පස්සේ Filter එක රන් කරනවා
+        filterMovies();
     });
 }
 loadLiveRequests();
+
+// 🟢 Live Search & Filter Logic 🟢
+const searchInput = document.getElementById("searchInput");
+if(searchInput) {
+    searchInput.addEventListener("input", filterMovies);
+}
+
+document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+        document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+        this.classList.add("active");
+        filterMovies();
+    });
+});
+
+function filterMovies() {
+    const input = document.getElementById("searchInput");
+    if(!input) return; // HTML එකේ search bar එක නැත්නම් මුකුත් කරන්නේ නෑ
+
+    const searchText = input.value.toLowerCase();
+    const activeBtn = document.querySelector(".filter-btn.active");
+    const activeFilter = activeBtn ? activeBtn.getAttribute("data-filter") : "all";
+    const cards = document.querySelectorAll(".movie-card");
+
+    cards.forEach(card => {
+        const title = card.getAttribute("data-title");
+        const language = card.getAttribute("data-language");
+        
+        const matchesSearch = title.includes(searchText);
+        const matchesFilter = activeFilter === "all" || language === activeFilter;
+
+        if (matchesSearch && matchesFilter) {
+            card.style.display = "flex";
+        } else {
+            card.style.display = "none";
+        }
+    });
+}
 
 // 🟢 Back to Top Button Logic 🟢
 const topBtn = document.getElementById("backToTop");
