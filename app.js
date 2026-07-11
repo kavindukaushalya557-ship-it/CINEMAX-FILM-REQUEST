@@ -159,7 +159,7 @@ async function fetchPoster(movieName) {
 function loadLiveRequests() {
     const list = document.getElementById('moviesList');
     
-    db.collection('requests').orderBy('timestamp', 'desc').limit(9).onSnapshot(async (snapshot) => {
+    db.collection('requests').orderBy('timestamp', 'desc').limit(12).onSnapshot(async (snapshot) => {
         list.innerHTML = ""; 
         if (snapshot.empty) {
             list.innerHTML = "<p style='color: #bbb; text-align:center; grid-column: 1/-1;'>No requests yet.</p>";
@@ -258,11 +258,13 @@ const statsObserver = new IntersectionObserver((entries) => {
 const statsSection = document.querySelector('.stats-section');
 if (statsSection) { statsObserver.observe(statsSection); }
 
-// 🟢 Movie Modal & Trailer Logic (NEW!) 🟢
+// 🟢 Movie Modal & Trailer Logic 🟢
 const modal = document.getElementById("movieModal");
 const closeBtn = document.querySelector(".close-btn");
 
-closeBtn.addEventListener("click", closeModal);
+if(closeBtn) {
+    closeBtn.addEventListener("click", closeModal);
+}
 window.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
 
 function closeModal() {
@@ -310,73 +312,76 @@ async function openMovieModal(movieName) {
         document.getElementById("modalPlot").innerText = "Failed to load movie details.";
     }
 }
+
 // 🟢 AI Movie Recommender Logic (Google Gemini + TMDB) 🟢
-const GEMINI_API_KEY = "AQ.Ab8RN6L4-OteHU-DWZstLGOFQ2Nc1cUpWv5jOHtbdxaQTI5r7w"; // මෙතනට ඔයාගේ Gemini API Key එක දාන්න
+const GEMINI_API_KEY = "AQ.Ab8RN6L4-OteHU-DWZstLGOFQ2Nc1cUpWv5jOHtbdxaQTI5r7w"; // ඔයාගේ Key එක මෙතන දාලා තියෙන්නේ
 
 const aiBtn = document.getElementById("aiBtn");
 const aiPrompt = document.getElementById("aiPrompt");
 const aiResults = document.getElementById("aiResults");
 const aiStatus = document.getElementById("aiStatus");
 
-aiBtn.addEventListener("click", async () => {
-    const prompt = aiPrompt.value.trim();
-    if (!prompt) {
-        showToast("⚠️ Please enter a movie description!");
-        return;
-    }
-
-    // Button loading state
-    aiBtn.innerText = "AI is thinking... 🧠";
-    aiBtn.style.opacity = "0.7";
-    aiResults.style.display = "grid";
-    aiResults.innerHTML = `<p style="text-align: center; color: #fff; grid-column: 1/-1;">Analyzing your request...</p>`;
-
-    try {
-        // 1. Gemini AI එකට prompt එක යැවීම
-        const aiInstruction = `You are a movie expert. Recommend exactly 4 movies based on this description: "${prompt}". Return ONLY a valid JSON array of strings containing the English movie names. No other text, no markdown. Example: ["Inception", "Interstellar", "Gravity", "The Martian"]`;
-        
-        const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: aiInstruction }] }]
-            })
-        });
-
-        const geminiData = await geminiRes.json();
-        let aiText = geminiData.candidates[0].content.parts[0].text;
-        
-        // JSON එක විතරක් පෙරා ගැනීම
-        aiText = aiText.replace(/```json/g, "").replace(/```/g, "").trim();
-        const movieNames = JSON.parse(aiText);
-
-        aiResults.innerHTML = ""; // පරණ දේවල් මකනවා
-
-        // 2. ඒ නම් 4 පාවිච්චි කරලා TMDB එකෙන් පෝස්ටර් ගැනීම
-        for (const name of movieNames) {
-            const poster = await fetchPoster(name); // අපි කලින් හදපු TMDB function එක පාවිච්චි කරනවා
-            const safeName = name.replace(/'/g, "&apos;");
-
-            // සයිට් එකේ පෙන්වීම (ක්ලික් කරාම නම Auto ගිහින් ෆෝම් එකට වැටෙනවා)
-            aiResults.innerHTML += `
-                <div class="movie-card tilt-card" onclick="document.getElementById('movieName').value='${safeName}'; window.location.hash='#requestForm'; showToast('Scroll down to submit! 👇');" style="cursor: pointer; border: 1px solid var(--accent-gold);">
-                    <img src="${poster}" class="poster-bg">
-                    <div class="movie-info" style="background: rgba(212, 175, 55, 0.9); padding: 15px;">
-                        <h3 style="color: #000; text-shadow: none;">${name}</h3>
-                        <p style="color: #222; font-weight: bold;">🎯 Click to Request</p>
-                    </div>
-                </div>
-            `;
+if (aiBtn) {
+    aiBtn.addEventListener("click", async () => {
+        const prompt = aiPrompt.value.trim();
+        if (!prompt) {
+            showToast("⚠️ Please enter a movie description!");
+            return;
         }
 
-        // Vanilla Tilt AI කාඩ් වලටත් දානවා
-        VanillaTilt.init(document.querySelectorAll("#aiResults .tilt-card"), { max: 15, speed: 400, glare: true, "max-glare": 0.4 });
+        aiBtn.innerText = "AI is thinking... 🧠";
+        aiBtn.style.opacity = "0.7";
+        aiResults.style.display = "grid";
+        aiResults.innerHTML = `<p style="text-align: center; color: #fff; grid-column: 1/-1;">Analyzing your request...</p>`;
 
-    } catch (error) {
-        console.error("AI Error:", error);
-        aiResults.innerHTML = `<p style="text-align: center; color: red; grid-column: 1/-1;">❌ AI is resting right now. Try again later!</p>`;
-    } finally {
-        aiBtn.innerText = "Ask AI ✨";
-        aiBtn.style.opacity = "1";
-    }
-});
+        try {
+            const aiInstruction = `You are a movie expert. Recommend exactly 4 movies based on this description: "${prompt}". Return ONLY a valid JSON array of strings containing the English movie names. No other text, no markdown. Example: ["Inception", "Interstellar", "Gravity", "The Martian"]`;
+            
+            const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: aiInstruction }] }]
+                })
+            });
+
+            const geminiData = await geminiRes.json();
+            
+            if(geminiData.error) {
+                console.error("API Error: ", geminiData.error.message);
+                aiResults.innerHTML = `<p style="text-align: center; color: red; grid-column: 1/-1;">❌ API Error: Check your API Key</p>`;
+                return;
+            }
+
+            let aiText = geminiData.candidates[0].content.parts[0].text;
+            aiText = aiText.replace(/```json/g, "").replace(/```/g, "").trim();
+            const movieNames = JSON.parse(aiText);
+
+            aiResults.innerHTML = ""; 
+
+            for (const name of movieNames) {
+                const poster = await fetchPoster(name);
+                const safeName = name.replace(/'/g, "&apos;");
+
+                aiResults.innerHTML += `
+                    <div class="movie-card tilt-card" onclick="document.getElementById('movieName').value='${safeName}'; window.location.hash='#requestForm'; showToast('Scroll down to submit! 👇');" style="cursor: pointer; border: 1px solid var(--accent-gold);">
+                        <img src="${poster}" class="poster-bg">
+                        <div class="movie-info" style="background: rgba(212, 175, 55, 0.9); padding: 15px;">
+                            <h3 style="color: #000; text-shadow: none;">${name}</h3>
+                            <p style="color: #222; font-weight: bold;">🎯 Click to Request</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            VanillaTilt.init(document.querySelectorAll("#aiResults .tilt-card"), { max: 15, speed: 400, glare: true, "max-glare": 0.4 });
+
+        } catch (error) {
+            console.error("AI Error:", error);
+            aiResults.innerHTML = `<p style="text-align: center; color: red; grid-column: 1/-1;">❌ AI is resting right now. Try again later!</p>`;
+        } finally {
+            aiBtn.innerText = "Ask AI ✨";
+            aiBtn.style.opacity = "1";
+        }
+    });
+}
