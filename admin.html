@@ -3,136 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CINEMAX HD - Admin Dashboard</title>
+    <title>CINEMAX HD - Admin Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            margin: 0; font-family: 'Poppins', sans-serif;
-            background-color: #0a0a0a; color: #ffffff;
-        }
-        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
-        
-        /* Login Section */
-        #loginSection {
-            text-align: center; margin-top: 100px;
-        }
-        input {
-            padding: 12px; border-radius: 8px; border: 1px solid #444;
-            background: #222; color: white; width: 250px; font-size: 1rem;
-        }
-        button {
-            padding: 12px 20px; background: #e50914; color: white;
-            border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem;
-        }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background-color: #0a0a0a; color: #ffffff; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+        #loginSection { text-align: center; margin-top: 100px; }
+        input { padding: 12px; border-radius: 8px; border: 1px solid #444; background: #222; color: white; width: 250px; font-size: 1rem; }
+        button { padding: 12px 20px; background: #e50914; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; margin: 5px; }
         button:hover { background: #b20710; }
-
-        /* Dashboard Section */
         #dashboardSection { display: none; }
         h1 { color: #d4af37; text-align: center; }
-        table {
-            width: 100%; border-collapse: collapse; margin-top: 20px;
-            background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;
-        }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
         th, td { padding: 15px; text-align: left; border-bottom: 1px solid #333; }
         th { background-color: #1a1a1a; color: #d4af37; }
         tr:hover { background-color: rgba(255,255,255,0.1); }
         .btn-delete { background: #e50914; padding: 6px 12px; font-size: 0.9rem; }
+        .btn-complete { background: #25D366; color: black; padding: 6px 12px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Login Screen -->
         <div id="loginSection">
             <h2>🔒 Admin Access Required</h2>
             <input type="password" id="adminPassword" placeholder="Enter Admin Password">
             <button onclick="checkPassword()">Login</button>
-            <p id="loginError" style="color: red; display: none;">Incorrect Password!</p>
+            <p id="loginError" style="color: red; display: none; margin-top:10px;">Incorrect Password!</p>
         </div>
 
-        <!-- Dashboard Screen -->
         <div id="dashboardSection">
-            <h1>⚙️ CINEMAX HD - Admin Panel</h1>
-            <p style="text-align: center;">View all movie and TV series requests here.</p>
+            <h1>⚙️ CINEMAX HD - Admin Dashboard</h1>
+            <p style="text-align: center; color: #aaa;">Owner: Mr. Kavindu Kaushalya</p>
             
             <table>
                 <thead>
                     <tr>
                         <th>Date</th>
-                        <th>Name</th>
                         <th>WhatsApp No</th>
                         <th>Movie/Series</th>
-                        <th>Language</th>
-                        <th>Year</th>
-                        <th>Action</th>
+                        <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="requestTableBody">
-                    <!-- Requests will load here automatically -->
-                </tbody>
+                <tbody id="requestTableBody"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // 1. Check Password
         function checkPassword() {
-            const pass = document.getElementById('adminPassword').value;
-            if(pass === "kavindu2026") {
+            if(document.getElementById('adminPassword').value === "kavindu2026") {
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('dashboardSection').style.display = 'block';
-                loadRequests(); // Load data after login
+                loadRequests(); 
             } else {
                 document.getElementById('loginError').style.display = 'block';
             }
         }
 
-        // 2. Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBA--GH1poSmBUu_N2XD5G_3gMurRH-Ga0",
-            authDomain: "cinemaxhd-2a9c2.firebaseapp.com",
-            projectId: "cinemaxhd-2a9c2"
-        };
+        const firebaseConfig = { apiKey: "AIzaSyBA--GH1poSmBUu_N2XD5G_3gMurRH-Ga0", authDomain: "cinemaxhd-2a9c2.firebaseapp.com", projectId: "cinemaxhd-2a9c2" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 3. Load Requests from Database
         function loadRequests() {
             const tableBody = document.getElementById('requestTableBody');
-            tableBody.innerHTML = "<tr><td colspan='7' style='text-align:center;'>Loading requests...</td></tr>";
-
-            // Get data ordered by newest first
+            
             db.collection("requests").orderBy("timestamp", "desc").onSnapshot((querySnapshot) => {
-                tableBody.innerHTML = ""; // Clear loading text
-                
-                if(querySnapshot.empty) {
-                    tableBody.innerHTML = "<tr><td colspan='7' style='text-align:center;'>No requests found.</td></tr>";
-                    return;
-                }
+                tableBody.innerHTML = ""; 
+                if(querySnapshot.empty) { tableBody.innerHTML = "<tr><td colspan='5'>No requests.</td></tr>"; return; }
 
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
-                    
-                    // Format Date
-                    let dateStr = "N/A";
+                    let dateStr = "Just Now";
                     if(data.timestamp) {
                         const date = data.timestamp.toDate();
                         dateStr = date.toLocaleDateString() + " " + date.toLocaleTimeString();
                     }
 
+                    const statusBadge = data.status === 'completed' ? '<span style="color:#25D366; font-weight:bold;">Completed</span>' : '<span style="color:#ff4a52; font-weight:bold;">Pending</span>';
+
                     const row = `
                         <tr>
                             <td>${dateStr}</td>
-                            <td>${data.fullName || "N/A"}</td>
                             <td>${data.waNumber}</td>
-                            <td style="font-weight: bold; color: #fff;">${data.movieName}</td>
-                            <td>${data.language}</td>
-                            <td>${data.year || "N/A"}</td>
-                            <td><button class="btn-delete" onclick="deleteRequest('${doc.id}')">Delete</button></td>
+                            <td style="font-weight: bold; color: #fff;">${data.movieName} (${data.language})</td>
+                            <td>${statusBadge}</td>
+                            <td>
+                                ${data.status !== 'completed' ? `<button class="btn-complete" onclick="markCompleted('${doc.id}')">Complete</button>` : ''}
+                                <button class="btn-delete" onclick="deleteRequest('${doc.id}')">Delete</button>
+                            </td>
                         </tr>
                     `;
                     tableBody.innerHTML += row;
@@ -140,15 +103,13 @@
             });
         }
 
-        // 4. Delete Request Function
+        // 🟢 Mark as Completed Function 🟢
+        function markCompleted(docId) {
+            db.collection("requests").doc(docId).update({ status: 'completed' });
+        }
+
         function deleteRequest(docId) {
-            if(confirm("Are you sure you want to delete this request?")) {
-                db.collection("requests").doc(docId).delete().then(() => {
-                    alert("Request deleted successfully!");
-                }).catch((error) => {
-                    console.error("Error removing document: ", error);
-                });
-            }
+            if(confirm("Are you sure you want to delete this?")) db.collection("requests").doc(docId).delete();
         }
     </script>
 </body>
