@@ -334,24 +334,31 @@ if (aiBtn) {
         aiResults.style.display = "grid";
         aiResults.innerHTML = `<p style="text-align: center; color: #fff; grid-column: 1/-1;">Analyzing your request...</p>`;
 
-        try {
-            const aiInstruction = `You are a movie expert. Recommend exactly 4 movies based on this description: "${prompt}". Return ONLY a valid JSON array of strings containing the English movie names. No other text, no markdown. Example: ["Inception", "Interstellar", "Gravity", "The Martian"]`;
-            
-            const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: aiInstruction }] }]
-                })
-            });
+       try {
+    const aiInstruction = `You are a movie expert. Recommend exactly 4 movies based on this description: "${prompt}". Return ONLY a valid JSON array of strings containing the English movie names. No other text, no markdown. Example: ["Inception", "Interstellar", "Gravity", "The Martian"]`;
+    
+    // --- මෙතනින් පල්ලෙහාට තියෙන පරණ fetch කෑල්ල මකලා, අලුත් එක දාන්න ---
+    
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    
+    const geminiRes = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            contents: [{ parts: [{ text: aiInstruction }] }]
+        })
+    });
 
-            const geminiData = await geminiRes.json();
-            
-            if(geminiData.error) {
-                console.error("API Error: ", geminiData.error.message);
-                aiResults.innerHTML = `<p style="text-align: center; color: red; grid-column: 1/-1;">❌ API Error: Check your API Key</p>`;
-                return;
-            }
+    const geminiData = await geminiRes.json();
+    
+    // මේ Check එක අනිවාර්යයෙන්ම දාන්න (TypeError එක නවත්තන්න)
+    if (!geminiData.candidates || !geminiData.candidates[0].content) {
+        console.error("AI Response Error:", geminiData);
+        aiResults.innerHTML = `<p style="text-align: center; color: red; grid-column: 1/-1;">❌ API Error: Invalid response. Check your API Key.</p>`;
+        return;
+    }
+    
+    // --- මෙතනින් පස්සේ ඔයාගේ පරණ කෝඩ් එකේ තියෙන ඉතුරු ටික (aiText = ... පේළියට පස්සේ එන ටික) ඒ විදිහටම තියෙන්න දෙන්න ---
 
             let aiText = geminiData.candidates[0].content.parts[0].text;
             aiText = aiText.replace(/```json/g, "").replace(/```/g, "").trim();
