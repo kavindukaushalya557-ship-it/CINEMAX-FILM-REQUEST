@@ -1,5 +1,4 @@
-/** 
- * ==========================================
+/** * ==========================================
  * 1. CONFIGURATION & SETUP
  * ==========================================
  */
@@ -26,8 +25,7 @@ const PLACEHOLDER_POSTER = "https://placehold.co/500x750/111111/d4af37?text=Load
 const NO_IMG_POSTER = "https://placehold.co/40x60/111111/d4af37?text=No+Img";
 
 
-/** 
- * ==========================================
+/** * ==========================================
  * 2. UTILITY & HELPER FUNCTIONS
  * ==========================================
  */
@@ -64,8 +62,7 @@ async function fetchPoster(movieName) {
 }
 
 
-/** 
- * ==========================================
+/** * ==========================================
  * 3. MODAL & GLOBAL ACTIONS
  * ==========================================
  */
@@ -118,8 +115,7 @@ window.closeModal = function() {
 };
 
 
-/** 
- * ==========================================
+/** * ==========================================
  * 4. INITIALIZATION & EVENT LISTENERS
  * ==========================================
  */
@@ -127,6 +123,9 @@ window.closeModal = function() {
 document.addEventListener("DOMContentLoaded", function() {  
 
     initPreloader();
+    initThemeToggle();    // 🔥 අලුත් Theme Toggle එක
+    initCustomCursor();   // 🔥 අලුත් Glowing Cursor එක
+    initTypingEffect();   // 🔥 අලුත් Auto Typing එක
     initParticles();
     initScrollAnimations();
     initAutoSuggest();
@@ -137,6 +136,56 @@ document.addEventListener("DOMContentLoaded", function() {
     initModalEvents();
 
     // --- Sub-functions for cleaner initialization ---
+
+    // 🔥 1. Theme Toggle Logic 🔥
+    function initThemeToggle() {
+        const themeToggle = document.getElementById("themeToggle");
+        if (!themeToggle) return;
+        
+        if (localStorage.getItem("theme") === "light") {
+            document.body.classList.add("light-mode");
+            themeToggle.innerText = "🌙";
+        }
+        themeToggle.addEventListener("click", () => {
+            document.body.classList.toggle("light-mode");
+            if (document.body.classList.contains("light-mode")) {
+                localStorage.setItem("theme", "light");
+                themeToggle.innerText = "🌙";
+            } else {
+                localStorage.setItem("theme", "dark");
+                themeToggle.innerText = "☀️";
+            }
+        });
+    }
+
+    // 🔥 2. Custom Cursor Logic 🔥
+    function initCustomCursor() {
+        const cursor = document.getElementById('custom-cursor');
+        if (!cursor) return;
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+    }
+
+    // 🔥 3. Auto Typing Logic 🔥
+    function initTypingEffect() {
+        const textToType = "Request Your Favorite Movies & TV Series";
+        const typingElement = document.getElementById("typing-text");
+        if (!typingElement) return;
+        
+        let typeIndex = 0;
+        function typeEffect() {
+            if (typeIndex < textToType.length) {
+                typingElement.innerHTML = textToType.substring(0, typeIndex + 1) + '<span class="typing-cursor"></span>';
+                typeIndex++;
+                setTimeout(typeEffect, 100);
+            } else {
+                typingElement.innerHTML = textToType + '<span class="typing-cursor"></span>';
+            }
+        }
+        setTimeout(typeEffect, 1500);
+    }
 
     function initPreloader() {
         window.addEventListener('load', () => {
@@ -163,13 +212,11 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function initScrollAnimations() {
-        // Fade-up animation
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('visible'); });
         }, { threshold: 0.1 });
         document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-        // Counters animation
         const statsSection = document.querySelector('.stats-section');
         if (statsSection) {
             const statsObserver = new IntersectionObserver((entries) => {
@@ -252,7 +299,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }, 500); 
         });
 
-        // Close suggest list on outside click
         document.addEventListener("click", (e) => {
             if (!movieNameInput.contains(e.target) && !suggestionsList.contains(e.target)) {
                 suggestionsList.style.display = "none";
@@ -267,8 +313,8 @@ document.addEventListener("DOMContentLoaded", function() {
         movieForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const submitBtn = document.querySelector('.btn-submit');
-            const originalText = submitBtn.innerText;
-            submitBtn.innerText = "Submitting...";
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Submitting...";
 
             try {
                 await db.collection('requests').add({
@@ -280,13 +326,25 @@ document.addEventListener("DOMContentLoaded", function() {
                     status: 'pending',
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
+                
                 window.showToast("✅ Request Submitted Successfully!");
                 movieForm.reset();
+
+                // 🔥 4. Celebration Confetti Animation! 🔥
+                if(typeof confetti === "function") {
+                    confetti({
+                        particleCount: 150,
+                        spread: 80,
+                        origin: { y: 0.6 },
+                        colors: ['#e50914', '#d4af37', '#ffffff']
+                    });
+                }
+
             } catch (error) {
                 console.error("Firebase Error:", error);
                 window.showToast("❌ Error! Please try again.");
             } finally {
-                submitBtn.innerText = originalText;
+                submitBtn.innerHTML = originalText;
             }
         });
     }
@@ -329,7 +387,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 VanillaTilt.init(document.querySelectorAll(".tilt-card"), { max: 15, speed: 400, glare: true, "max-glare": 0.4 });
             }
             
-            // Re-apply filters on new data load
             const filterEvt = new Event("input");
             const searchInput = document.getElementById("searchInput");
             if (searchInput) searchInput.dispatchEvent(filterEvt);
