@@ -311,7 +311,7 @@ async function openMovieModal(movieName) {
     }
 }
 // 🟢 AI Movie Recommender Logic (Google Gemini + TMDB) 🟢
-const GEMINI_API_KEY = "AIzaSyDhVdDbUaPSvLgms9Wb6NS6fwWTFlR7J4Y"; // මෙතනට ඔයාගේ Gemini API Key එක දාන්න
+const GEMINI_API_KEY = "AQ.Ab8RN6L4-OteHU-DWZstLGOFQ2Nc1cUpWv5jOHtbdxaQTI5r7w"; // මෙතනට ඔයාගේ Gemini API Key එක දාන්න
 
 const aiBtn = document.getElementById("aiBtn");
 const aiPrompt = document.getElementById("aiPrompt");
