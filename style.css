@@ -181,3 +181,23 @@ footer h3 { color: white; margin: 5px 0; }
     0% { background-position: 100% 0; }
     100% { background-position: -100% 0; }
 }
+/* 🟢 Auto-suggest Dropdown 🟢 */
+.suggestions-list {
+    position: absolute; top: 100%; left: 0; right: 0; z-index: 1000;
+    background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(10px);
+    border: 1px solid var(--primary-red); border-radius: 10px;
+    margin-top: 5px; padding: 0; list-style: none;
+    max-height: 250px; overflow-y: auto; display: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+}
+.suggestions-list li {
+    padding: 10px 15px; display: flex; align-items: center; gap: 15px;
+    cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s;
+}
+.suggestions-list li:hover { background: rgba(229,9,20,0.2); }
+.suggestions-list li img { width: 40px; height: 60px; object-fit: cover; border-radius: 5px; }
+.suggestions-list .sugg-info { display: flex; flex-direction: column; text-align: left; }
+.suggestions-list .sugg-title { color: white; font-weight: bold; font-size: 0.95rem; }
+.suggestions-list .sugg-year { color: var(--accent-gold); font-size: 0.8rem; }
+.suggestions-list::-webkit-scrollbar { width: 6px; }
+.suggestions-list::-webkit-scrollbar-thumb { background: var(--primary-red); border-radius: 10px; }
