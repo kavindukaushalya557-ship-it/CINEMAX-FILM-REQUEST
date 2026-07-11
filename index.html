@@ -15,16 +15,19 @@
         <div class="loading-text">CINEMAX <span>HD</span></div>
     </div>
 
-    <!-- Background Accents & Particles -->
+    <!-- 🟢 Cinematic Ticker 🟢 -->
+    <div class="ticker-wrap">
+        <div class="ticker">
+            🔥 Welcome to CINEMAX HD! Request your favorite Movies and TV Series now. ⚡ Fast Uploads ⚡ Sinhala Dubbed ⚡ TV Series ⚡ Exclusive Community. Enjoy the premium experience! 🍿
+        </div>
+    </div>
+
     <div class="bg-glow-red"></div>
     <div class="bg-glow-gold"></div>
-    <div id="particles-container"></div> <!-- 🟢 Particles 🟢 -->
-
-    <!-- 🟢 Toast Notification 🟢 -->
+    <div id="particles-container"></div>
     <div id="toast">✅ Request Submitted Successfully!</div>
 
     <div class="container">
-        
         <header class="hero-section fade-up">
             <h1 class="logo">CINEMAX <span>HD</span></h1>
             <p class="subtitle">Request Your Favorite Movies & TV Series</p>
@@ -65,41 +68,36 @@
             </form>
         </section>
 
-        <!-- 🟢 Live Firebase Latest Requests 🟢 -->
+        <!-- Live Firebase Latest Requests -->
         <section class="latest-movies fade-up">
             <h2 class="section-title">🔥 Live Latest Requests</h2>
             <p style="text-align: center; color: #aaa; margin-bottom:20px;">Real-time updates from our users!</p>
             <div class="movie-grid" id="moviesList">
-                <!-- Data will auto-load here from Firebase -->
                 <p style="text-align: center; color: #fff; grid-column: 1/-1;">Loading latest requests...</p>
             </div>
         </section>
 
-        <!-- Community Links Section -->
+        <!-- Community Links Section (With 3D Tilt) -->
         <section class="community-links fade-up">
             <h2 class="section-title">💬 Join Our Community</h2>
             <div class="links-grid">
-                <div class="link-card glass-panel">
+                <div class="link-card glass-panel" data-tilt data-tilt-scale="1.05" data-tilt-glare="true" data-tilt-max-glare="0.5">
                     <h3>🎬 Movie Group 1</h3>
-                    <p>Movies Only</p>
                     <a href="https://chat.whatsapp.com/GyxIrEzCP6BAnClqZqTFen" target="_blank" class="btn-wa">Join WhatsApp</a>
                 </div>
-                <div class="link-card glass-panel">
+                <div class="link-card glass-panel" data-tilt data-tilt-scale="1.05" data-tilt-glare="true" data-tilt-max-glare="0.5">
                     <h3>🎬 Movie Group 2</h3>
-                    <p>Movies Only</p>
                     <a href="https://chat.whatsapp.com/Iir4FNY2cqx2TAx4sN8zsl" target="_blank" class="btn-wa">Join WhatsApp</a>
                 </div>
-                <div class="link-card glass-panel">
-                    <h3>📺 TV Series Community</h3>
-                    <p>TV Series Only</p>
+                <div class="link-card glass-panel" data-tilt data-tilt-scale="1.05" data-tilt-glare="true" data-tilt-max-glare="0.5">
+                    <h3>📺 TV Series</h3>
                     <a href="https://chat.whatsapp.com/IcjVWaOg52IJaX75pAQJr2" target="_blank" class="btn-wa">Join WhatsApp</a>
                 </div>
-                <div class="link-card glass-panel">
-                    <h3>🎬 SinhalaDub Group</h3>
-                    <p>Sinhala Dubbed Movies</p>
+                <div class="link-card glass-panel" data-tilt data-tilt-scale="1.05" data-tilt-glare="true" data-tilt-max-glare="0.5">
+                    <h3>🎬 SinhalaDub</h3>
                     <a href="https://chat.whatsapp.com/FE3rq49Qi3y3tomvsldHng" target="_blank" class="btn-wa">Join WhatsApp</a>
                 </div>
-                <div class="link-card glass-panel channel-card">
+                <div class="link-card glass-panel channel-card" data-tilt data-tilt-scale="1.02" data-tilt-glare="true" data-tilt-max-glare="0.3">
                     <h3>📢 Official Channel</h3>
                     <p>Get the latest updates directly!</p>
                     <a href="https://whatsapp.com/channel/0029Vb6oAn2EquiVw3u3Y63q/184" target="_blank" class="btn-wa-channel">Follow Channel</a>
@@ -107,14 +105,18 @@
             </div>
         </section>
 
-        <!-- Footer -->
         <footer class="fade-up">
             <h3>CINEMAX HD</h3>
             <p>Owner: Mr. Kavindu Kaushalya</p>
             <p>&copy; 2026 CINEMAX HD. All Rights Reserved.</p>
         </footer>
-
     </div>
+
+    <!-- 🟢 Back to Top Button 🟢 -->
+    <button id="backToTop" title="Go to top">↑</button>
+
+    <!-- 🟢 Vanilla Tilt JS for 3D Effect 🟢 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
