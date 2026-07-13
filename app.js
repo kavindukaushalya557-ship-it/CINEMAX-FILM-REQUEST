@@ -1,5 +1,4 @@
-/** 
- * ==========================================
+/** * ==========================================
  * 1. CONFIGURATION & SETUP
  * ==========================================
  */
@@ -26,8 +25,7 @@ const PLACEHOLDER_POSTER = "https://placehold.co/500x750/111111/d4af37?text=Load
 const NO_IMG_POSTER = "https://placehold.co/40x60/111111/d4af37?text=No+Img";
 
 
-/** 
- * ==========================================
+/** * ==========================================
  * 2. UTILITY & HELPER FUNCTIONS
  * ==========================================
  */
@@ -64,8 +62,7 @@ async function fetchPoster(movieName) {
 }
 
 
-/** 
- * ==========================================
+/** * ==========================================
  * 3. MODAL & GLOBAL ACTIONS
  * ==========================================
  */
@@ -118,8 +115,7 @@ window.closeModal = function() {
 };
 
 
-/** 
- * ==========================================
+/** * ==========================================
  * 4. INITIALIZATION & EVENT LISTENERS
  * ==========================================
  */
@@ -307,23 +303,46 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // 🔥 Modified initFormSubmit to handle WhatsApp Routing 🔥
     function initFormSubmit() {
         const movieForm = document.getElementById('movieForm');
         if (!movieForm) return;
 
         movieForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            // Get all form values
+            const fullName = document.getElementById('fullName').value;
+            const waNumber = document.getElementById('waNumber').value;
+            const movieName = document.getElementById('movieName').value;
+            const language = document.getElementById('language').value;
+            const year = document.getElementById('year').value;
+            const requestType = document.getElementById('requestType') ? document.getElementById('requestType').value : 'movie';
+
+            // 🔥 Logic 1: If "Paid TV Series" is selected, route directly to WhatsApp 🔥
+            if (requestType === "paid_tv") {
+                const waMessage = `ආයුබෝවන්, මට මේ TV Series එක Buy කරන්න ඕනේ. 📺\n\n*Name:* ${movieName}\n*Language:* ${language}\n*Year:* ${year}\n*My Name:* ${fullName || "Not Provided"}\n*WhatsApp Number:* ${waNumber}`;
+                const waUrl = `https://wa.me/94760595208?text=${encodeURIComponent(waMessage)}`;
+                
+                window.open(waUrl, "_blank"); // Open WhatsApp in new tab
+                window.showToast("✅ Redirecting to WhatsApp...");
+                movieForm.reset();
+                return; // Stop here, do NOT save to Firebase
+            }
+
+            // 🔥 Logic 2: If "Movie/Free Series" is selected, save to Firebase as usual 🔥
             const submitBtn = document.querySelector('.btn-submit');
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Submitting...";
 
             try {
                 await db.collection('requests').add({
-                    fullName: document.getElementById('fullName').value,
-                    waNumber: document.getElementById('waNumber').value,
-                    movieName: document.getElementById('movieName').value,
-                    language: document.getElementById('language').value,
-                    year: document.getElementById('year').value,
+                    fullName: fullName,
+                    waNumber: waNumber,
+                    movieName: movieName,
+                    language: language,
+                    year: year,
+                    requestType: requestType, // Saved to DB so you know it's free
                     status: 'pending',
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
@@ -331,6 +350,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 window.showToast("✅ Request Submitted Successfully!");
                 movieForm.reset();
 
+                // Confetti Animation
                 if(typeof confetti === "function") {
                     confetti({
                         particleCount: 150,
@@ -393,7 +413,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // 🔥 සර්ච් කරද්දී මුකුත් නැත්නම් පණිවිඩයක් පෙන්වීම මෙතන තියෙනවා 🔥
     function initFilters() {
         const searchInput = document.getElementById("searchInput");
         const filterBtns = document.querySelectorAll(".filter-btn");
@@ -405,7 +424,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const activeFilter = activeBtn ? activeBtn.getAttribute("data-filter") : "all";
             const cards = document.querySelectorAll(".movie-card");
             
-            let visibleCount = 0; // කීයක් පේනවද කියලා ගණන් කරනවා
+            let visibleCount = 0; 
 
             cards.forEach(card => {
                 const title = card.getAttribute("data-title");
@@ -423,7 +442,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
 
-            // මුකුත් නැත්නම් පණිවිඩය පෙන්වන කොටස
             const list = document.getElementById('moviesList');
             let noResultsMsg = document.getElementById("noResultsMsg");
             
