@@ -135,9 +135,13 @@ document.addEventListener("DOMContentLoaded", function() {
     initBackToTop();
     initModalEvents();
     
-    // 🔥 අලුතින් එකතු කරපු වැඩකෑලි දෙක 🔥
+    // පරණ එකතු කරපු වැඩකෑලි
     initVoiceSearch();
     initTicketDownload();
+    
+    // 🔥 අලුතින් එකතු කරපු Phone UI වැඩකෑලි 🔥
+    initRippleEffect();
+    initMobileFAB();
 
     // --- Sub-functions for cleaner initialization ---
 
@@ -308,6 +312,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    // 🔥 AutoSuggest with Episode Count Logic 🔥
     function initAutoSuggest() {
         const movieNameInput = document.getElementById("movieName");
         const suggestionsList = document.getElementById("suggestionsList");
@@ -319,6 +324,12 @@ document.addEventListener("DOMContentLoaded", function() {
         movieNameInput.addEventListener("input", function() {
             clearTimeout(debounceTimer);
             const query = this.value.trim();
+            
+            const reqDropdown = document.getElementById("requestType");
+            if(reqDropdown) {
+                reqDropdown.disabled = false;
+                reqDropdown.style.opacity = "1";
+            }
             
             if (query.length < 2) {
                 suggestionsList.style.display = "none";
@@ -349,10 +360,37 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                         `;
                         
-                        li.addEventListener("click", () => {
+                        li.addEventListener("click", async () => {
                             movieNameInput.value = title;
                             if (yearInput) yearInput.value = year !== "N/A" ? year : ""; 
                             suggestionsList.style.display = "none";
+
+                            const reqTypeDropdown = document.getElementById("requestType");
+                            
+                            if (item.media_type === 'tv' && reqTypeDropdown) {
+                                window.showToast("⏳ Checking episodes limit...");
+                                
+                                const tvDetails = await fetchTMDB(`/tv/${item.id}?`);
+                                
+                                if (tvDetails && tvDetails.number_of_episodes) {
+                                    const epCount = tvDetails.number_of_episodes;
+                                    
+                                    if (epCount > 12) {
+                                        reqTypeDropdown.value = "paid_tv"; 
+                                        window.showToast(`⚠️ Episodes ${epCount} ක් තියෙනවා! (Premium Series)`);
+                                    } else {
+                                        reqTypeDropdown.value = "movie"; 
+                                        window.showToast(`✅ Episodes ${epCount} යි! (Free Series)`);
+                                    }
+                                    
+                                    reqTypeDropdown.disabled = true;
+                                    reqTypeDropdown.style.opacity = "0.7";
+                                }
+                            } else if (item.media_type === 'movie' && reqTypeDropdown) {
+                                reqTypeDropdown.value = "movie";
+                                reqTypeDropdown.disabled = true;
+                                reqTypeDropdown.style.opacity = "0.7";
+                            }
                         });
                         
                         suggestionsList.appendChild(li);
@@ -370,7 +408,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // 🔥 Modified initFormSubmit to show the Ticket Modal 🔥
     function initFormSubmit() {
         const movieForm = document.getElementById('movieForm');
         if (!movieForm) return;
@@ -388,13 +425,32 @@ document.addEventListener("DOMContentLoaded", function() {
                 const movieName = document.getElementById('movieName').value;
                 const language = document.getElementById('language').value;
                 const year = document.getElementById('year').value;
+                const requestType = document.getElementById('requestType') ? document.getElementById('requestType').value : 'movie';
 
+                // 🔥 Logic 1: If "Paid TV Series" is selected, route directly to WhatsApp 🔥
+                if (requestType === "paid_tv") {
+                     const waMessage = `ආයුබෝවන්, මට මේ TV Series එක Buy කරන්න ඕනේ. 📺\n\n*Name:* ${movieName}\n*Language:* ${language}\n*Year:* ${year}\n*My Name:* ${fullName || "Not Provided"}\n*WhatsApp Number:* ${waNumber}\n\n💳 *දැනුවත් වීමට:*\n• Episodes 13-30: Rs. 200\n• Episodes 31-50: Rs. 350\n• Episodes 50+: Rs. 500+`;
+                    const waUrl = `https://wa.me/94760595208?text=${encodeURIComponent(waMessage)}`;
+                    
+                    window.open(waUrl, "_blank"); 
+                    window.showToast("✅ Redirecting to WhatsApp...");
+                    movieForm.reset();
+                    
+                    if(document.getElementById('requestType')) {
+                        document.getElementById('requestType').disabled = false;
+                        document.getElementById('requestType').style.opacity = "1";
+                    }
+                    return; 
+                }
+
+                // 🔥 Logic 2: If "Movie/Free Series", save to Firebase 🔥
                 await db.collection('requests').add({
                     fullName: fullName,
                     waNumber: waNumber,
                     movieName: movieName,
                     language: language,
                     year: year,
+                    requestType: requestType, 
                     status: 'pending',
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
@@ -413,6 +469,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 if(ticketModal) ticketModal.style.display = 'flex';
 
                 movieForm.reset();
+                
+                if(document.getElementById('requestType')) {
+                    document.getElementById('requestType').disabled = false;
+                    document.getElementById('requestType').style.opacity = "1";
+                }
 
                 if(typeof confetti === "function") {
                     confetti({
@@ -552,6 +613,50 @@ document.addEventListener("DOMContentLoaded", function() {
         if (closeBtn) closeBtn.addEventListener("click", window.closeModal);
         window.addEventListener("click", (e) => { 
             if (e.target === modal) window.closeModal(); 
+        });
+    }
+
+    // 🔥 1. App-like Touch Ripple Effect Logic 🔥
+    function initRippleEffect() {
+        document.querySelectorAll('.ripple-element').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                let ripple = document.createElement('span');
+                ripple.classList.add('ripple-span');
+                let rect = this.getBoundingClientRect();
+                let x = e.clientX - rect.left;
+                let y = e.clientY - rect.top;
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                let size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.marginTop = ripple.style.marginLeft = -(size / 2) + 'px';
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+    }
+
+    // 🔥 2. Mobile Bottom Button Smart Hide/Show Logic 🔥
+    function initMobileFAB() {
+        window.addEventListener('scroll', () => {
+            const fab = document.getElementById('mobileFab');
+            const form = document.getElementById('requestForm');
+            if(!fab || !form) return;
+            
+            const formRect = form.getBoundingClientRect();
+            
+            // ෆෝන් එකෙන් බලද්දි විතරක් මේක වැඩ කරන්නේ (Width < 768px)
+            if(window.innerWidth <= 768) {
+                // යූසර් දැනටමත් Form එක දිහා බලන් ඉන්නවා නම්, Floating බටන් එක හංගනවා
+                if (formRect.top < window.innerHeight && formRect.bottom > 0) {
+                    fab.style.display = 'none'; 
+                } else {
+                    // Form එක පේන්නේ නැත්නම් (පල්ලෙහාට ගිහින් නම්) බටන් එක පෙන්වනවා
+                    fab.style.display = 'flex'; 
+                }
+            } else {
+                fab.style.display = 'none'; // PC එකෙන් බලද්දි හැමතිස්සෙම හංගනවා
+            }
         });
     }
 
