@@ -441,3 +441,53 @@ body.light-mode input::placeholder {
 body.light-mode .btn-submit {
     color: #ffffff !important;
 }
+
+
+/* =======================================================
+   🔥 MOBILE-FIRST UI ADDITIONS (ෆෝන් එකට ගැලපෙන අලුත් ටික) 🔥
+======================================================= */
+
+/* 1. ෆෝන් එකේ නිල් පාට Tap Highlight එක අයින් කිරීම (Native App Look) */
+a, button, input, select, .ripple-element {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 2. iOS/Android ෆෝන් වල Auto Zoom වෙන එක නැවැත්වීම */
+@media screen and (max-width: 768px) {
+    input, select {
+        font-size: 16px !important; 
+    }
+}
+
+/* 3. Breathing Pulse Effect for Submit Button */
+@keyframes pulseAlert {
+    0% { box-shadow: 0 0 0 0 rgba(229, 9, 20, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(229, 9, 20, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(229, 9, 20, 0); }
+}
+.btn-submit { 
+    animation: pulseAlert 2s infinite; 
+    border: 1px solid #ff4a52; 
+}
+
+/* 4. Ripple Effect (App-like touch) */
+.ripple-element { position: relative; overflow: hidden; cursor: pointer; }
+.ripple-span {
+    position: absolute; border-radius: 50%; transform: scale(0);
+    animation: ripple-animation 0.6s linear; background: rgba(255, 255, 255, 0.4); pointer-events: none;
+}
+@keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
+
+/* 5. Floating Action Button (Mobile Only) */
+.mobile-fab {
+    display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(45deg, #e50914, #ff5252); color: white;
+    padding: 12px 25px; border-radius: 30px; font-weight: bold; font-size: 1rem;
+    box-shadow: 0 5px 20px rgba(229, 9, 20, 0.6); z-index: 998; text-decoration: none;
+    align-items: center; justify-content: center; gap: 8px; border: 1px solid #ff758c; white-space: nowrap; transition: 0.3s;
+}
+@media (max-width: 768px) {
+    .mobile-fab { display: flex; }
+    /* Mobile එකේදී Back to top එක උඩට ගන්නවා overlap වෙන්නෙ නැති වෙන්න */
+    #backToTop { bottom: 80px; right: 20px; } 
+}
