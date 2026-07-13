@@ -9,6 +9,30 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="https://fav.farm/🍿" />
+
+    <!-- 🔥 Ticket එකයි Voice Search එකයි ලස්සනට හදාගන්න අවශ්‍ය CSS 🔥 -->
+    <style>
+        .input-wrapper { position: relative; display: flex; align-items: center; }
+        .input-wrapper input { width: 100%; padding-right: 40px !important; }
+        #micBtn { position: absolute; right: 15px; cursor: pointer; color: var(--accent-gold); font-size: 1.2rem; transition: 0.3s; z-index: 5; }
+        #micBtn:hover { transform: scale(1.1); color: #e50914; }
+        .recording { color: #e50914 !important; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        
+        /* Ticket Modal CSS */
+        #ticketBox {
+            background: linear-gradient(135deg, #111, #222); border: 2px dashed #d4af37; 
+            border-radius: 10px; padding: 20px; color: #fff; text-align: left; position: relative; margin-bottom: 20px;
+        }
+        .barcode-text {
+            font-family: 'Courier New', Courier, monospace; font-size: 1.5rem; letter-spacing: 2px;
+            color: #fff; display: block; text-align: center; margin-top: 15px; opacity: 0.8; font-weight: bold;
+        }
+        .close-ticket-btn {
+            position: absolute; right: 15px; top: 10px; color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .close-ticket-btn:hover { color: #e50914; }
+    </style>
 </head>
 <body>
 
@@ -76,7 +100,13 @@
                 
                 <div class="input-group" style="position: relative;">
                     <label><i class="fas fa-film"></i> Movie or TV Series Name *</label>
-                    <input type="text" id="movieName" required autocomplete="off" placeholder="e.g. Interstellar">
+                    
+                    <!-- 🔥 අලුත් Voice Search මයික් එක මෙතන තියෙනවා 🔥 -->
+                    <div class="input-wrapper">
+                        <input type="text" id="movieName" required autocomplete="off" placeholder="e.g. Interstellar">
+                        <i class="fas fa-microphone" id="micBtn" title="කටහඬින් සෙවීමට ඔබන්න"></i>
+                    </div>
+                    
                     <ul id="suggestionsList" class="suggestions-list"></ul>
                 </div>
 
@@ -237,10 +267,35 @@
         </div>
     </div>
 
+    <!-- 🔥 අලුත් Cinema Ticket Popup Modal එක 🔥 -->
+    <div id="ticketModal" class="modal" style="z-index: 10000;">
+        <div class="modal-content glass-panel" style="max-width: 400px; text-align: center; position: relative;">
+            <span class="close-ticket-btn">&times;</span>
+            <h2 style="color: #d4af37; margin-bottom: 15px; font-size: 1.5rem;"><i class="fas fa-ticket-alt"></i> Your Request Ticket</h2>
+            
+            <div id="ticketBox">
+                <div style="text-align: center; border-bottom: 1px solid #444; padding-bottom: 10px; margin-bottom: 10px;">
+                    <h3 style="color: #e50914; margin: 0; font-size: 1.5rem;">CINEMAX HD</h3>
+                    <small style="color: #aaa;">Official Movie Request</small>
+                </div>
+                <p style="margin: 8px 0; color: #ccc;"><strong>🎬 Movie:</strong> <span id="t-movie" style="color: #fff; font-weight:bold;">-</span></p>
+                <p style="margin: 8px 0; color: #ccc;"><strong>👤 Name:</strong> <span id="t-name" style="color: #fff;">-</span></p>
+                <p style="margin: 8px 0; color: #ccc;"><strong>📅 Date:</strong> <span id="t-date" style="color: #fff;">-</span></p>
+                <p style="margin: 8px 0; color: #ccc;"><strong>🎫 Status:</strong> <span style="color: #4cd137; font-weight:bold;">Accepted (Queue)</span></p>
+                
+                <span class="barcode-text">||||| | || |||| | ||||</span>
+            </div>
+            
+            <button id="downloadTicketBtn" class="btn-primary" style="width: 100%; margin-top: 10px;"><i class="fas fa-download"></i> Download Ticket</button>
+        </div>
+    </div>
+
     <!-- External Essential Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
-    <!-- 🔥 4. Confetti Library එක 🔥 -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- 🔥 Ticket Image එක හදන්න ඕන html2canvas Library එක 🔥 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
