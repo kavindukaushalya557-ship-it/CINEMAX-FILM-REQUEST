@@ -1,4 +1,5 @@
-/** * ==========================================
+/** 
+ * ==========================================
  * 1. CONFIGURATION & SETUP
  * ==========================================
  */
@@ -25,7 +26,8 @@ const PLACEHOLDER_POSTER = "https://placehold.co/500x750/111111/d4af37?text=Load
 const NO_IMG_POSTER = "https://placehold.co/40x60/111111/d4af37?text=No+Img";
 
 
-/** * ==========================================
+/** 
+ * ==========================================
  * 2. UTILITY & HELPER FUNCTIONS
  * ==========================================
  */
@@ -62,7 +64,8 @@ async function fetchPoster(movieName) {
 }
 
 
-/** * ==========================================
+/** 
+ * ==========================================
  * 3. MODAL & GLOBAL ACTIONS
  * ==========================================
  */
@@ -115,7 +118,8 @@ window.closeModal = function() {
 };
 
 
-/** * ==========================================
+/** 
+ * ==========================================
  * 4. INITIALIZATION & EVENT LISTENERS
  * ==========================================
  */
@@ -241,6 +245,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    // 🔥 Modified AutoSuggest with Episode Count Logic 🔥
     function initAutoSuggest() {
         const movieNameInput = document.getElementById("movieName");
         const suggestionsList = document.getElementById("suggestionsList");
@@ -252,6 +257,13 @@ document.addEventListener("DOMContentLoaded", function() {
         movieNameInput.addEventListener("input", function() {
             clearTimeout(debounceTimer);
             const query = this.value.trim();
+            
+            // යූසර් අලුතින් ටයිප් කරද්දි Dropdown එක ආයේ Unlock කරනවා
+            const reqDropdown = document.getElementById("requestType");
+            if(reqDropdown) {
+                reqDropdown.disabled = false;
+                reqDropdown.style.opacity = "1";
+            }
             
             if (query.length < 2) {
                 suggestionsList.style.display = "none";
@@ -282,10 +294,42 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                         `;
                         
-                        li.addEventListener("click", () => {
+                        // 🔥 යූසර් ෆිල්ම් එක තේරුවාම වෙන දේ (Auto Select Logic) 🔥
+                        li.addEventListener("click", async () => {
                             movieNameInput.value = title;
                             if (yearInput) yearInput.value = year !== "N/A" ? year : ""; 
                             suggestionsList.style.display = "none";
+
+                            const reqTypeDropdown = document.getElementById("requestType");
+                            
+                            if (item.media_type === 'tv' && reqTypeDropdown) {
+                                window.showToast("⏳ Checking episodes limit...");
+                                
+                                // TMDB එකෙන් TV Series එකේ සම්පූර්ණ විස්තර ගන්නවා
+                                const tvDetails = await fetchTMDB(`/tv/${item.id}?`);
+                                
+                                if (tvDetails && tvDetails.number_of_episodes) {
+                                    const epCount = tvDetails.number_of_episodes;
+                                    
+                                    // 🟢 මෙතන තියෙන 10 තමයි Episode සීමාව.
+                                    if (epCount > 10) {
+                                        reqTypeDropdown.value = "paid_tv"; // Long Series (Paid)
+                                        window.showToast(`⚠️ Episodes ${epCount} ක් තියෙනවා! (Premium Series)`);
+                                    } else {
+                                        reqTypeDropdown.value = "movie"; // Short Series (Free)
+                                        window.showToast(`✅ Episodes ${epCount} යි! (Free Series)`);
+                                    }
+                                    
+                                    // යූසර්ට වෙනස් කරන්න බැරි වෙන්න Dropdown එක Lock කරනවා
+                                    reqTypeDropdown.disabled = true;
+                                    reqTypeDropdown.style.opacity = "0.7";
+                                }
+                            } else if (item.media_type === 'movie' && reqTypeDropdown) {
+                                // තේරුවේ ෆිල්ම් එකක් නම් සාමාන්‍ය විදිහට Free එකට දාලා Lock කරනවා
+                                reqTypeDropdown.value = "movie";
+                                reqTypeDropdown.disabled = true;
+                                reqTypeDropdown.style.opacity = "0.7";
+                            }
                         });
                         
                         suggestionsList.appendChild(li);
@@ -303,7 +347,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // 🔥 Modified initFormSubmit to handle WhatsApp Routing 🔥
     function initFormSubmit() {
         const movieForm = document.getElementById('movieForm');
         if (!movieForm) return;
@@ -311,7 +354,6 @@ document.addEventListener("DOMContentLoaded", function() {
         movieForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Get all form values
             const fullName = document.getElementById('fullName').value;
             const waNumber = document.getElementById('waNumber').value;
             const movieName = document.getElementById('movieName').value;
@@ -324,13 +366,19 @@ document.addEventListener("DOMContentLoaded", function() {
                 const waMessage = `ආයුබෝවන්, මට මේ TV Series එක Buy කරන්න ඕනේ. 📺\n\n*Name:* ${movieName}\n*Language:* ${language}\n*Year:* ${year}\n*My Name:* ${fullName || "Not Provided"}\n*WhatsApp Number:* ${waNumber}`;
                 const waUrl = `https://wa.me/94760595208?text=${encodeURIComponent(waMessage)}`;
                 
-                window.open(waUrl, "_blank"); // Open WhatsApp in new tab
+                window.open(waUrl, "_blank"); 
                 window.showToast("✅ Redirecting to WhatsApp...");
                 movieForm.reset();
-                return; // Stop here, do NOT save to Firebase
+                
+                // ෆෝම් එක රීසෙට් වුණාම ඩ්‍රොප්ඩවුන් එක ආයේ අන්ලොක් කරනවා
+                if(document.getElementById('requestType')) {
+                    document.getElementById('requestType').disabled = false;
+                    document.getElementById('requestType').style.opacity = "1";
+                }
+                return; 
             }
 
-            // 🔥 Logic 2: If "Movie/Free Series" is selected, save to Firebase as usual 🔥
+            // 🔥 Logic 2: If "Movie/Free Series", save to Firebase 🔥
             const submitBtn = document.querySelector('.btn-submit');
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Submitting...";
@@ -342,15 +390,20 @@ document.addEventListener("DOMContentLoaded", function() {
                     movieName: movieName,
                     language: language,
                     year: year,
-                    requestType: requestType, // Saved to DB so you know it's free
+                    requestType: requestType, 
                     status: 'pending',
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
                 window.showToast("✅ Request Submitted Successfully!");
                 movieForm.reset();
+                
+                // ෆෝම් එක රීසෙට් වුණාම ඩ්‍රොප්ඩවුන් එක ආයේ අන්ලොක් කරනවා
+                if(document.getElementById('requestType')) {
+                    document.getElementById('requestType').disabled = false;
+                    document.getElementById('requestType').style.opacity = "1";
+                }
 
-                // Confetti Animation
                 if(typeof confetti === "function") {
                     confetti({
                         particleCount: 150,
