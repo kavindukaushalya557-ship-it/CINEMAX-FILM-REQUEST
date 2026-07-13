@@ -363,7 +363,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // 🔥 Logic 1: If "Paid TV Series" is selected, route directly to WhatsApp 🔥
             if (requestType === "paid_tv") {
-                const waMessage = `ආයුබෝවන්, මට මේ TV Series එක Buy කරන්න ඕනේ. 📺\n\n*Name:* ${movieName}\n*Language:* ${language}\n*Year:* ${year}\n*My Name:* ${fullName || "Not Provided"}\n*WhatsApp Number:* ${waNumber}`;
+                 const waMessage = `ආයුබෝවන්, මට මේ TV Series එක Buy කරන්න ඕනේ. 📺\n\n*Name:* ${movieName}\n*Language:* ${language}\n*Year:* ${year}\n*My Name:* ${fullName || "Not Provided"}\n*WhatsApp Number:* ${waNumber}\n\n💳 *දැනුවත් වීමට:*\n• Episodes 13-30: Rs. 200\n• Episodes 31-50: Rs. 350\n• Episodes 50+: Rs. 500+`;
                 const waUrl = `https://wa.me/94760595208?text=${encodeURIComponent(waMessage)}`;
                 
                 window.open(waUrl, "_blank"); 
