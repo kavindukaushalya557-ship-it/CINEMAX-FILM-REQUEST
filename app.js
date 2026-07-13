@@ -311,8 +311,8 @@ document.addEventListener("DOMContentLoaded", function() {
                                 if (tvDetails && tvDetails.number_of_episodes) {
                                     const epCount = tvDetails.number_of_episodes;
                                     
-                                    // 🟢 මෙතන තියෙන 10 තමයි Episode සීමාව.
-                                    if (epCount > 10) {
+                                    // 🟢 මෙතන තියෙන 12 තමයි Episode සීමාව.
+                                    if (epCount > 12) {
                                         reqTypeDropdown.value = "paid_tv"; // Long Series (Paid)
                                         window.showToast(`⚠️ Episodes ${epCount} ක් තියෙනවා! (Premium Series)`);
                                     } else {
