@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="https://fav.farm/🍿" />
 
-    <!-- 🔥 Ticket එකයි Voice Search එකයි ලස්සනට හදාගන්න අවශ්‍ය CSS 🔥 -->
+    <!-- 🔥 Ticket එකයි, Voice Search එකයි සහ අලුත් Mobile Design එකයි 🔥 -->
     <style>
         .input-wrapper { position: relative; display: flex; align-items: center; }
         .input-wrapper input { width: 100%; padding-right: 40px !important; }
@@ -32,6 +32,39 @@
             position: absolute; right: 15px; top: 10px; color: #fff; font-size: 24px; font-weight: bold; cursor: pointer; transition: 0.3s;
         }
         .close-ticket-btn:hover { color: #e50914; }
+
+        /* ==========================================
+           🔥 MOBILE-FIRST UI ADDITIONS (අලුත් ටික) 🔥
+           ========================================== */
+        
+        /* 1. Breathing Pulse Effect for Submit Button */
+        @keyframes pulseAlert {
+            0% { box-shadow: 0 0 0 0 rgba(229, 9, 20, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(229, 9, 20, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(229, 9, 20, 0); }
+        }
+        .btn-submit { animation: pulseAlert 2s infinite; border: 1px solid #ff4a52; }
+
+        /* 2. Floating Action Button (Mobile Only) */
+        .mobile-fab {
+            display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(45deg, #e50914, #ff5252); color: white;
+            padding: 12px 25px; border-radius: 30px; font-weight: bold; font-size: 1rem;
+            box-shadow: 0 5px 20px rgba(229, 9, 20, 0.6); z-index: 998; text-decoration: none;
+            align-items: center; gap: 8px; border: 1px solid #ff758c; white-space: nowrap; transition: 0.3s;
+        }
+        @media (max-width: 768px) {
+            .mobile-fab { display: flex; }
+            #backToTop { bottom: 80px; } /* Back to top එක උඩට ගන්නවා overlap වෙන්නෙ නැති වෙන්න */
+        }
+
+        /* 3. Ripple Effect (App-like touch) */
+        .ripple-element { position: relative; overflow: hidden; }
+        .ripple-span {
+            position: absolute; border-radius: 50%; transform: scale(0);
+            animation: ripple-animation 0.6s linear; background: rgba(255, 255, 255, 0.4); pointer-events: none;
+        }
+        @keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
     </style>
 </head>
 <body>
@@ -40,7 +73,7 @@
     <div id="custom-cursor"></div>
 
     <!-- 🔥 2. Theme Toggle Button 🔥 -->
-    <button id="themeToggle" class="theme-btn" title="Toggle Light/Dark Mode">☀️</button>
+    <button id="themeToggle" class="theme-btn ripple-element" title="Toggle Light/Dark Mode">☀️</button>
 
     <!-- Preloader -->
     <div id="preloader">
@@ -69,7 +102,7 @@
             <h1 class="logo">CINEMAX <span>HD</span></h1>
             <!-- 🔥 3. Auto Typing Text මෙතනට එනවා 🔥 -->
             <p class="subtitle" id="typing-text"></p>
-            <a href="#requestForm" class="btn-primary"><i class="fas fa-paper-plane"></i> Request Now</a>
+            <a href="#requestForm" class="btn-primary ripple-element"><i class="fas fa-paper-plane"></i> Request Now</a>
         </header>
 
         <!-- Main Movie Request Form -->
@@ -104,7 +137,7 @@
                     <!-- 🔥 අලුත් Voice Search මයික් එක මෙතන තියෙනවා 🔥 -->
                     <div class="input-wrapper">
                         <input type="text" id="movieName" required autocomplete="off" placeholder="e.g. Interstellar">
-                        <i class="fas fa-microphone" id="micBtn" title="කටහඬින් සෙවීමට ඔබන්න"></i>
+                        <i class="fas fa-microphone ripple-element" id="micBtn" title="කටහඬින් සෙවීමට ඔබන්න" style="border-radius: 50%; padding: 5px;"></i>
                     </div>
                     
                     <ul id="suggestionsList" class="suggestions-list"></ul>
@@ -134,7 +167,8 @@
                         <input type="number" id="year" placeholder="e.g. 2014">
                     </div>
                 </div>
-                <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Submit Request</button>
+                <!-- 🔥 Ripple Effect එකයි Pulse Effect එකයි Submit බටන් එකට ඇඩ් කළා 🔥 -->
+                <button type="submit" class="btn-submit ripple-element"><i class="fas fa-paper-plane"></i> Submit Request</button>
             </form>
         </section>
 
@@ -146,11 +180,11 @@
             <div class="search-filter-container">
                 <input type="text" id="searchInput" placeholder="🔍 Search requested movies...">
                 <div class="filter-buttons">
-                    <button class="filter-btn active" data-filter="all">All</button>
-                    <button class="filter-btn" data-filter="English">English</button>
-                    <button class="filter-btn" data-filter="Sinhala Dubbed">Sinhala Dubbed</button>
-                    <button class="filter-btn" data-filter="Tamil">Tamil</button>
-                    <button class="filter-btn" data-filter="Hindi">Hindi</button>
+                    <button class="filter-btn active ripple-element" data-filter="all">All</button>
+                    <button class="filter-btn ripple-element" data-filter="English">English</button>
+                    <button class="filter-btn ripple-element" data-filter="Sinhala Dubbed">Sinhala Dubbed</button>
+                    <button class="filter-btn ripple-element" data-filter="Tamil">Tamil</button>
+                    <button class="filter-btn ripple-element" data-filter="Hindi">Hindi</button>
                 </div>
             </div>
 
@@ -168,24 +202,24 @@
             <div class="links-grid">
                 <div class="link-card glass-panel" data-tilt data-tilt-scale="1.05" data-tilt-glare="true" data-tilt-max-glare="0.5">
                     <h3><i class="fas fa-film"></i> Movie Group 1</h3>
-                    <a href="https://chat.whatsapp.com/EJsqSgcz6hd9Cv7YLTb2z0" target="_blank" class="btn-wa"><i class="fab fa-whatsapp"></i> Join WhatsApp</a>
+                    <a href="https://chat.whatsapp.com/EJsqSgcz6hd9Cv7YLTb2z0" target="_blank" class="btn-wa ripple-element"><i class="fab fa-whatsapp"></i> Join WhatsApp</a>
                 </div>
                 <div class="link-card glass-panel" data-tilt data-tilt-scale="1.05" data-tilt-glare="true" data-tilt-max-glare="0.5">
                     <h3><i class="fas fa-film"></i> Movie Group 2</h3>
-                    <a href="https://chat.whatsapp.com/Iir4FNY2cqx2TAx4sN8zsl" target="_blank" class="btn-wa"><i class="fab fa-whatsapp"></i> Join WhatsApp</a>
+                    <a href="https://chat.whatsapp.com/Iir4FNY2cqx2TAx4sN8zsl" target="_blank" class="btn-wa ripple-element"><i class="fab fa-whatsapp"></i> Join WhatsApp</a>
                 </div>
                 <div class="link-card glass-panel" data-tilt data-tilt-scale="1.05" data-tilt-glare="true" data-tilt-max-glare="0.5">
                     <h3><i class="fas fa-tv"></i> TV Series</h3>
-                    <a href="https://chat.whatsapp.com/IcjVWaOg52IJaX75pAQJr2" target="_blank" class="btn-wa"><i class="fab fa-whatsapp"></i> Join WhatsApp</a>
+                    <a href="https://chat.whatsapp.com/IcjVWaOg52IJaX75pAQJr2" target="_blank" class="btn-wa ripple-element"><i class="fab fa-whatsapp"></i> Join WhatsApp</a>
                 </div>
                 <div class="link-card glass-panel" data-tilt data-tilt-scale="1.05" data-tilt-glare="true" data-tilt-max-glare="0.5">
                     <h3><i class="fas fa-microphone"></i> SinhalaDub</h3>
-                    <a href="https://chat.whatsapp.com/FE3rq49Qi3y3tomvsldHng" target="_blank" class="btn-wa"><i class="fab fa-whatsapp"></i> Join WhatsApp</a>
+                    <a href="https://chat.whatsapp.com/FE3rq49Qi3y3tomvsldHng" target="_blank" class="btn-wa ripple-element"><i class="fab fa-whatsapp"></i> Join WhatsApp</a>
                 </div>
                 <div class="link-card glass-panel channel-card" data-tilt data-tilt-scale="1.02" data-tilt-glare="true" data-tilt-max-glare="0.3">
                     <h3><i class="fas fa-bullhorn"></i> Official Channel</h3>
                     <p>Get the latest updates directly!</p>
-                    <a href="https://whatsapp.com/channel/0029Vb6oAn2EquiVw3u3Y63q/184" target="_blank" class="btn-wa-channel"><i class="fas fa-bell"></i> Follow Channel</a>
+                    <a href="https://whatsapp.com/channel/0029Vb6oAn2EquiVw3u3Y63q/184" target="_blank" class="btn-wa-channel ripple-element"><i class="fas fa-bell"></i> Follow Channel</a>
                 </div>
             </div>
         </section>
@@ -246,8 +280,13 @@
         </footer>
     </div>
 
+    <!-- 🔥 අලුත් Mobile Floating Button එක (ෆෝන් වලට විතරක් පේනවා) 🔥 -->
+    <a href="#requestForm" id="mobileFab" class="mobile-fab ripple-element">
+        <i class="fas fa-video"></i> Request Movie
+    </a>
+
     <!-- Smooth Back To Top Button -->
-    <button id="backToTop" title="Go to top"><i class="fas fa-chevron-up"></i></button>
+    <button id="backToTop" title="Go to top" class="ripple-element"><i class="fas fa-chevron-up"></i></button>
 
     <!-- TMDB Dynamic Movie Popup Modal -->
     <div id="movieModal" class="modal">
@@ -286,20 +325,55 @@
                 <span class="barcode-text">||||| | || |||| | ||||</span>
             </div>
             
-            <button id="downloadTicketBtn" class="btn-primary" style="width: 100%; margin-top: 10px;"><i class="fas fa-download"></i> Download Ticket</button>
+            <button id="downloadTicketBtn" class="btn-primary ripple-element" style="width: 100%; margin-top: 10px;"><i class="fas fa-download"></i> Download Ticket</button>
         </div>
     </div>
 
     <!-- External Essential Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    
-    <!-- 🔥 Ticket Image එක හදන්න ඕන html2canvas Library එක 🔥 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="app.js"></script>
-    
+
+    <!-- 🔥 App-like Touch Ripple & FAB Controller Script 🔥 -->
+    <script>
+        // 1. Touch Ripple Effect Logic
+        document.querySelectorAll('.ripple-element').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                let ripple = document.createElement('span');
+                ripple.classList.add('ripple-span');
+                let rect = this.getBoundingClientRect();
+                let x = e.clientX - rect.left;
+                let y = e.clientY - rect.top;
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                let size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.marginTop = ripple.style.marginLeft = -(size / 2) + 'px';
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // 2. Mobile Bottom Button Smart Hide/Show Logic
+        window.addEventListener('scroll', () => {
+            const fab = document.getElementById('mobileFab');
+            const form = document.getElementById('requestForm');
+            if(!fab || !form) return;
+            const formRect = form.getBoundingClientRect();
+            // ෆෝන් එකෙන් බලද්දි විතරක් මේක වැඩ කරන්නේ (Width < 768px)
+            if(window.innerWidth <= 768) {
+                // යූසර් දැනටමත් Form එක දිහා බලන් ඉන්නවා නම්, Floating බටන් එක හංගනවා
+                if (formRect.top < window.innerHeight && formRect.bottom > 0) {
+                    fab.style.display = 'none'; 
+                } else {
+                    // Form එක පේන්නේ නැත්නම් (පල්ලෙහාට ගිහින් නම්) බටන් එක පෙන්වනවා
+                    fab.style.display = 'flex'; 
+                }
+            }
+        });
+    </script>
 </body>
 </html>
