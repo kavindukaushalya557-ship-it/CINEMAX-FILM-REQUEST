@@ -51,20 +51,40 @@
         <!-- Main Movie Request Form -->
         <section id="requestForm" class="glass-panel fade-up">
             <h2><i class="fas fa-edit"></i> Submit a Request</h2>
+
+            <!-- 🔥 අලුතින් එකතු කරපු Request Rules කෑල්ල 🔥 -->
+            <div class="request-notice" style="background: rgba(229, 9, 20, 0.1); border-left: 4px solid #e50914; padding: 10px 15px; margin-bottom: 20px; border-radius: 4px; font-size: 0.85rem; color: var(--text-color);">
+                <p style="margin-bottom: 5px;"><strong>⚠️ Request Rules:</strong></p>
+                <ul style="margin-top: 5px; padding-left: 20px; list-style-type: square; opacity: 0.9;">
+                    <li>කරුණාකර සිංහල උපසිරැසි සහිත චිත්‍රපට පමණක් ඉල්ලුම් කරන්න.</li>
+                    <li>දීර්ඝ කතා මාලා (TV Series) සඳහා ගාස්තු අය කෙරේ. (කෙටි කතා මාලා පමණක් නොමිලේ ලබා දේ).</li>
+                </ul>
+            </div>
+
             <form id="movieForm">
                 <div class="input-group">
                     <label><i class="fas fa-user-circle"></i> Full Name (Optional)</label>
                     <input type="text" id="fullName" placeholder="Enter your name">
                 </div>
                 <div class="input-group">
+                    <!-- 🔥 WhatsApp Number Validation (ඉලක්කම් 10 සීමාව) එකතු කර ඇත 🔥 -->
                     <label><i class="fab fa-whatsapp"></i> WhatsApp Number *</label>
-                    <input type="text" id="waNumber" required placeholder="07X XXX XXXX">
+                    <input type="text" id="waNumber" required pattern="[0-9]{10}" maxlength="10" placeholder="07XXXXXXXX (ඉලක්කම් 10 පමණි)">
                 </div>
                 
                 <div class="input-group" style="position: relative;">
                     <label><i class="fas fa-film"></i> Movie or TV Series Name *</label>
                     <input type="text" id="movieName" required autocomplete="off" placeholder="e.g. Interstellar">
                     <ul id="suggestionsList" class="suggestions-list"></ul>
+                </div>
+
+                <!-- 🔥 අලුතින් එකතු කරපු Request Type Dropdown එක 🔥 -->
+                <div class="input-group">
+                    <label><i class="fas fa-layer-group"></i> Request Type</label>
+                    <select id="requestType">
+                        <option value="movie">Movie / Short TV Series (Free)</option>
+                        <option value="paid_tv">Long TV Series (Buy Premium)</option>
+                    </select>
                 </div>
                 
                 <div class="row">
