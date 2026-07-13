@@ -1,5 +1,4 @@
-/** 
- * ==========================================
+/** * ==========================================
  * 1. CONFIGURATION & SETUP
  * ==========================================
  */
@@ -26,8 +25,7 @@ const PLACEHOLDER_POSTER = "https://placehold.co/500x750/111111/d4af37?text=Load
 const NO_IMG_POSTER = "https://placehold.co/40x60/111111/d4af37?text=No+Img";
 
 
-/** 
- * ==========================================
+/** * ==========================================
  * 2. UTILITY & HELPER FUNCTIONS
  * ==========================================
  */
@@ -64,8 +62,7 @@ async function fetchPoster(movieName) {
 }
 
 
-/** 
- * ==========================================
+/** * ==========================================
  * 3. MODAL & GLOBAL ACTIONS
  * ==========================================
  */
@@ -118,8 +115,7 @@ window.closeModal = function() {
 };
 
 
-/** 
- * ==========================================
+/** * ==========================================
  * 4. INITIALIZATION & EVENT LISTENERS
  * ==========================================
  */
@@ -138,8 +134,75 @@ document.addEventListener("DOMContentLoaded", function() {
     initFilters();
     initBackToTop();
     initModalEvents();
+    
+    // 🔥 අලුතින් එකතු කරපු වැඩකෑලි දෙක 🔥
+    initVoiceSearch();
+    initTicketDownload();
 
     // --- Sub-functions for cleaner initialization ---
+
+    // 🔥 Voice Search AI Feature 🔥
+    function initVoiceSearch() {
+        const micBtn = document.getElementById("micBtn");
+        const movieInput = document.getElementById("movieName");
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            if (micBtn) micBtn.style.display = 'none'; 
+            return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.lang = 'en-US'; 
+
+        if (micBtn) {
+            micBtn.addEventListener("click", () => {
+                recognition.start();
+                micBtn.classList.remove('fa-microphone');
+                micBtn.classList.add('fa-spinner', 'fa-spin', 'recording'); 
+                window.showToast("🎤 Listening... Speak now!");
+            });
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                if(movieInput) {
+                    movieInput.value = transcript;
+                    movieInput.dispatchEvent(new Event('input')); 
+                }
+                window.showToast(`✅ Found: ${transcript}`);
+            };
+
+            recognition.onend = () => {
+                micBtn.classList.remove('fa-spinner', 'fa-spin', 'recording');
+                micBtn.classList.add('fa-microphone');
+            };
+        }
+    }
+
+    // 🔥 Cinema Ticket Generation Download 🔥
+    function initTicketDownload() {
+        const downloadBtn = document.getElementById('downloadTicketBtn');
+        const closeTicketBtn = document.querySelector('.close-ticket-btn');
+        const ticketModal = document.getElementById('ticketModal');
+
+        if(closeTicketBtn && ticketModal) {
+            closeTicketBtn.addEventListener('click', () => ticketModal.style.display = 'none');
+        }
+
+        if(downloadBtn) {
+            downloadBtn.addEventListener('click', () => {
+                const ticketBox = document.getElementById('ticketBox');
+                html2canvas(ticketBox, {backgroundColor: '#111'}).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = 'CINEMAX_Ticket.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    window.showToast("🎫 Ticket Downloaded!");
+                });
+            });
+        }
+    }
 
     function initThemeToggle() {
         const themeToggle = document.getElementById("themeToggle");
@@ -245,7 +308,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // 🔥 Modified AutoSuggest with Episode Count Logic 🔥
     function initAutoSuggest() {
         const movieNameInput = document.getElementById("movieName");
         const suggestionsList = document.getElementById("suggestionsList");
@@ -257,13 +319,6 @@ document.addEventListener("DOMContentLoaded", function() {
         movieNameInput.addEventListener("input", function() {
             clearTimeout(debounceTimer);
             const query = this.value.trim();
-            
-            // යූසර් අලුතින් ටයිප් කරද්දි Dropdown එක ආයේ Unlock කරනවා
-            const reqDropdown = document.getElementById("requestType");
-            if(reqDropdown) {
-                reqDropdown.disabled = false;
-                reqDropdown.style.opacity = "1";
-            }
             
             if (query.length < 2) {
                 suggestionsList.style.display = "none";
@@ -294,42 +349,10 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                         `;
                         
-                        // 🔥 යූසර් ෆිල්ම් එක තේරුවාම වෙන දේ (Auto Select Logic) 🔥
-                        li.addEventListener("click", async () => {
+                        li.addEventListener("click", () => {
                             movieNameInput.value = title;
                             if (yearInput) yearInput.value = year !== "N/A" ? year : ""; 
                             suggestionsList.style.display = "none";
-
-                            const reqTypeDropdown = document.getElementById("requestType");
-                            
-                            if (item.media_type === 'tv' && reqTypeDropdown) {
-                                window.showToast("⏳ Checking episodes limit...");
-                                
-                                // TMDB එකෙන් TV Series එකේ සම්පූර්ණ විස්තර ගන්නවා
-                                const tvDetails = await fetchTMDB(`/tv/${item.id}?`);
-                                
-                                if (tvDetails && tvDetails.number_of_episodes) {
-                                    const epCount = tvDetails.number_of_episodes;
-                                    
-                                    // 🟢 මෙතන තියෙන 12 තමයි Episode සීමාව.
-                                    if (epCount > 12) {
-                                        reqTypeDropdown.value = "paid_tv"; // Long Series (Paid)
-                                        window.showToast(`⚠️ Episodes ${epCount} ක් තියෙනවා! (Premium Series)`);
-                                    } else {
-                                        reqTypeDropdown.value = "movie"; // Short Series (Free)
-                                        window.showToast(`✅ Episodes ${epCount} යි! (Free Series)`);
-                                    }
-                                    
-                                    // යූසර්ට වෙනස් කරන්න බැරි වෙන්න Dropdown එක Lock කරනවා
-                                    reqTypeDropdown.disabled = true;
-                                    reqTypeDropdown.style.opacity = "0.7";
-                                }
-                            } else if (item.media_type === 'movie' && reqTypeDropdown) {
-                                // තේරුවේ ෆිල්ම් එකක් නම් සාමාන්‍ය විදිහට Free එකට දාලා Lock කරනවා
-                                reqTypeDropdown.value = "movie";
-                                reqTypeDropdown.disabled = true;
-                                reqTypeDropdown.style.opacity = "0.7";
-                            }
                         });
                         
                         suggestionsList.appendChild(li);
@@ -347,62 +370,49 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // 🔥 Modified initFormSubmit to show the Ticket Modal 🔥
     function initFormSubmit() {
         const movieForm = document.getElementById('movieForm');
         if (!movieForm) return;
 
         movieForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            const fullName = document.getElementById('fullName').value;
-            const waNumber = document.getElementById('waNumber').value;
-            const movieName = document.getElementById('movieName').value;
-            const language = document.getElementById('language').value;
-            const year = document.getElementById('year').value;
-            const requestType = document.getElementById('requestType') ? document.getElementById('requestType').value : 'movie';
-
-            // 🔥 Logic 1: If "Paid TV Series" is selected, route directly to WhatsApp 🔥
-            if (requestType === "paid_tv") {
-                 const waMessage = `ආයුබෝවන්, මට මේ TV Series එක Buy කරන්න ඕනේ. 📺\n\n*Name:* ${movieName}\n*Language:* ${language}\n*Year:* ${year}\n*My Name:* ${fullName || "Not Provided"}\n*WhatsApp Number:* ${waNumber}\n\n💳 *දැනුවත් වීමට:*\n• Episodes 13-30: Rs. 200\n• Episodes 31-50: Rs. 350\n• Episodes 50+: Rs. 500+`;
-                const waUrl = `https://wa.me/94760595208?text=${encodeURIComponent(waMessage)}`;
-                
-                window.open(waUrl, "_blank"); 
-                window.showToast("✅ Redirecting to WhatsApp...");
-                movieForm.reset();
-                
-                // ෆෝම් එක රීසෙට් වුණාම ඩ්‍රොප්ඩවුන් එක ආයේ අන්ලොක් කරනවා
-                if(document.getElementById('requestType')) {
-                    document.getElementById('requestType').disabled = false;
-                    document.getElementById('requestType').style.opacity = "1";
-                }
-                return; 
-            }
-
-            // 🔥 Logic 2: If "Movie/Free Series", save to Firebase 🔥
             const submitBtn = document.querySelector('.btn-submit');
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Submitting...";
 
             try {
+                // Get Field Values
+                const fullName = document.getElementById('fullName').value;
+                const waNumber = document.getElementById('waNumber').value;
+                const movieName = document.getElementById('movieName').value;
+                const language = document.getElementById('language').value;
+                const year = document.getElementById('year').value;
+
                 await db.collection('requests').add({
                     fullName: fullName,
                     waNumber: waNumber,
                     movieName: movieName,
                     language: language,
                     year: year,
-                    requestType: requestType, 
                     status: 'pending',
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
                 window.showToast("✅ Request Submitted Successfully!");
-                movieForm.reset();
                 
-                // ෆෝම් එක රීසෙට් වුණාම ඩ්‍රොප්ඩවුන් එක ආයේ අන්ලොක් කරනවා
-                if(document.getElementById('requestType')) {
-                    document.getElementById('requestType').disabled = false;
-                    document.getElementById('requestType').style.opacity = "1";
-                }
+                // 🔥 පෝම් එක සබ්මිට් කරපු ගමන් Ticket එක පෙන්වීම 🔥
+                const tMovie = document.getElementById('t-movie');
+                const tName = document.getElementById('t-name');
+                const tDate = document.getElementById('t-date');
+                const ticketModal = document.getElementById('ticketModal');
+
+                if(tMovie) tMovie.innerText = movieName;
+                if(tName) tName.innerText = fullName || "Awesome User";
+                if(tDate) tDate.innerText = new Date().toLocaleDateString();
+                if(ticketModal) ticketModal.style.display = 'flex';
+
+                movieForm.reset();
 
                 if(typeof confetti === "function") {
                     confetti({
