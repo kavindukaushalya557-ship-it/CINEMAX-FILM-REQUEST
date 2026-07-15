@@ -439,7 +439,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     });
 
                     if (isRecentlyCompleted) {
-                        window.showToast("⚠️ මේ ෆිල්ම් එක පසුගිය දින 7 ඇතුළත Group එකට දාලා තියෙන්නේ! කරුණාකර Group එකේ Search කරන්න.");
+                        window.showToast("⚠️ ඔබ සොයන චිත්‍රපටය පසුගිය දින 7 තුළ Group එකට Upload කර ඇත. කරුණාකර නැවත ඉල්ලීමට පෙර සමූහයේ Search කරන්න.");
                         submitBtn.innerHTML = originalText;
                         return; // මෙතනින් නවත්තනවා (Database එකට යන්නෙ නෑ)
                     }
