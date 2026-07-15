@@ -538,3 +538,45 @@ a, button, input, select, .ripple-element {
         height: 220px !important;
     }
 }
+/* =======================================================
+   🔥 MOBILE VIEW FIX: 2 Links Per Row for WhatsApp Groups 🔥
+======================================================= */
+@media (max-width: 768px) {
+    /* එක පේළියකට ගෲප් කාඩ්ස් 2ක් පෙන්වීමට */
+    .links-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+    }
+    
+    /* කාඩ් එකේ සයිස් එක සහ ඉඩ (Padding) ෆෝන් එකට ගැලපෙන්න කුඩා කිරීම */
+    .link-card {
+        padding: 15px 10px !important;
+        border-radius: 12px !important;
+    }
+    
+    /* ගෲප් එකේ නම (Heading) පොඩි කිරීම */
+    .link-card h3 {
+        font-size: 0.85rem !important;
+        margin-bottom: 10px !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; /* නම දිග වැඩි නම් "..." වැටෙන්න */
+    }
+    
+    /* Join WhatsApp බටන් එකේ සයිස් එක පොඩි කිරීම */
+    .btn-wa, .btn-wa-channel {
+        padding: 8px 0 !important;
+        font-size: 0.75rem !important;
+        border-radius: 6px !important;
+    }
+
+    /* අන්තිමට තියෙන 'Official Channel' කාඩ් එක විතරක් පේළිය පුරාම (Full Width) තියන්න */
+    .channel-card {
+        grid-column: 1 / -1 !important; /* Column දෙකම කවර් වෙනවා */
+        padding: 20px 15px !important;
+    }
+    
+    .channel-card h3 {
+        font-size: 1rem !important;
+    }
+}
