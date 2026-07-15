@@ -36,7 +36,7 @@ window.showToast = function(message) {
     if (toast) {
         toast.innerText = message;
         toast.classList.add("show");
-        setTimeout(() => toast.classList.remove("show"), 4000); // වෙලාව ටිකක් වැඩි කළා මැසේජ් එක කියවන්න
+        setTimeout(() => toast.classList.remove("show"), 4000); 
     }
 };
 
@@ -133,7 +133,6 @@ document.addEventListener("DOMContentLoaded", function() {
     initModalEvents();
     
     initVoiceSearch();
-    initTicketDownload();
     initRippleEffect();
     initMobileFAB();
 
@@ -172,29 +171,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 micBtn.classList.remove('fa-spinner', 'fa-spin', 'recording');
                 micBtn.classList.add('fa-microphone');
             };
-        }
-    }
-
-    function initTicketDownload() {
-        const downloadBtn = document.getElementById('downloadTicketBtn');
-        const closeTicketBtn = document.querySelector('.close-ticket-btn');
-        const ticketModal = document.getElementById('ticketModal');
-
-        if(closeTicketBtn && ticketModal) {
-            closeTicketBtn.addEventListener('click', () => ticketModal.style.display = 'none');
-        }
-
-        if(downloadBtn) {
-            downloadBtn.addEventListener('click', () => {
-                const ticketBox = document.getElementById('ticketBox');
-                html2canvas(ticketBox, {backgroundColor: '#111'}).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = 'CINEMAX_Ticket.png';
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                    window.showToast("🎫 Ticket Downloaded!");
-                });
-            });
         }
     }
 
@@ -392,7 +368,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // 🔥 Modified Form Submit with Duplicate & Spam Check 🔥
+    // 🔥 Modified Form Submit with Epic Success Animation 🔥
     function initFormSubmit() {
         const movieForm = document.getElementById('movieForm');
         if (!movieForm) return;
@@ -408,31 +384,28 @@ document.addEventListener("DOMContentLoaded", function() {
             try {
                 const fullName = document.getElementById('fullName').value;
                 const waNumber = document.getElementById('waNumber').value;
-                const movieName = document.getElementById('movieName').value.trim(); // Trim extra spaces
+                const movieName = document.getElementById('movieName').value.trim();
                 const language = document.getElementById('language').value;
                 const year = document.getElementById('year').value;
                 const requestType = document.getElementById('requestType') ? document.getElementById('requestType').value : 'movie';
 
-                // 🔥 1. Duplicate & Spam Check Logic (දවස් 7ක් ඇතුළත දාලද බලනවා) 🔥
+                // 🔥 Duplicate & Spam Check Logic 🔥
                 if (requestType === "movie") {
                     const checkSnapshot = await db.collection('requests').where('movieName', '==', movieName).get();
                     let isRecentlyCompleted = false;
                     let isPending = false;
 
                     const sevenDaysAgo = new Date();
-                    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7); // අදින් දවස් 7කට කලින් දවස හදනවා
+                    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7); 
 
                     checkSnapshot.forEach(doc => {
                         const data = doc.data();
-                        
-                        // Status එක Completed නම්, දවස් 7ක් ඇතුළතද බලනවා
                         if (data.status === 'completed') {
                             const docDate = data.timestamp ? data.timestamp.toDate() : new Date(0);
                             if (docDate >= sevenDaysAgo) {
                                 isRecentlyCompleted = true;
                             }
                         } 
-                        // Status එක Pending නම්, කෙනෙක් දැනටමත් ඉල්ලලා තියෙන්නේ
                         else if (data.status === 'pending') {
                             isPending = true;
                         }
@@ -441,17 +414,17 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (isRecentlyCompleted) {
                         window.showToast("⚠️ ඔබ සොයන චිත්‍රපටය පසුගිය දින 7 තුළ Group එකට Upload කර ඇත. කරුණාකර නැවත ඉල්ලීමට පෙර සමූහයේ Search කරන්න.");
                         submitBtn.innerHTML = originalText;
-                        return; // මෙතනින් නවත්තනවා (Database එකට යන්නෙ නෑ)
+                        return; 
                     }
                     
                     if (isPending) {
                         window.showToast("⏳ මේ ෆිල්ම් එක දැනටමත් කෙනෙක් ඉල්ලලා තියෙන්නේ. අපි ඉක්මනින් Group එකට දානවා!");
                         submitBtn.innerHTML = originalText;
-                        return; // මෙතනින් නවත්තනවා
+                        return; 
                     }
                 }
 
-                // 2. Paid TV Series Logic
+                // Paid TV Series Logic
                 if (requestType === "paid_tv") {
                      const waMessage = `ආයුබෝවන්, මට මේ TV Series එක Buy කරන්න ඕනේ. 📺\n\n*Name:* ${movieName}\n*Language:* ${language}\n*Year:* ${year}\n*My Name:* ${fullName || "Not Provided"}\n*WhatsApp Number:* ${waNumber}\n\n💳 *දැනුවත් වීමට:*\n• Episodes 13-30: Rs. 200\n• Episodes 31-50: Rs. 350\n• Episodes 50+: Rs. 500+`;
                     const waUrl = `https://wa.me/94760595208?text=${encodeURIComponent(waMessage)}`;
@@ -467,10 +440,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     return; 
                 }
 
-                // Submitting Text
                 submitBtn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Submitting...";
 
-                // 3. Save to Firebase 
+                // Save to Firebase 
                 await db.collection('requests').add({
                     fullName: fullName,
                     waNumber: waNumber,
@@ -482,33 +454,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                window.showToast("✅ Request Submitted Successfully!");
-                
-                // Show Ticket Modal
-                const tMovie = document.getElementById('t-movie');
-                const tName = document.getElementById('t-name');
-                const tDate = document.getElementById('t-date');
-                const ticketModal = document.getElementById('ticketModal');
-
-                if(tMovie) tMovie.innerText = movieName;
-                if(tName) tName.innerText = fullName || "Awesome User";
-                if(tDate) tDate.innerText = new Date().toLocaleDateString();
-                if(ticketModal) ticketModal.style.display = 'flex';
+                // 🔥 අලුත් Epic Success Animation එක මෙතනින් පටන් ගන්නවා 🔥
+                showEpicSuccessAnimation(movieName);
 
                 movieForm.reset();
                 
                 if(document.getElementById('requestType')) {
                     document.getElementById('requestType').disabled = false;
                     document.getElementById('requestType').style.opacity = "1";
-                }
-
-                if(typeof confetti === "function") {
-                    confetti({
-                        particleCount: 150,
-                        spread: 80,
-                        origin: { y: 0.6 },
-                        colors: ['#e50914', '#d4af37', '#ffffff']
-                    });
                 }
 
             } catch (error) {
@@ -518,6 +471,51 @@ document.addEventListener("DOMContentLoaded", function() {
                 submitBtn.innerHTML = originalText;
             }
         });
+    }
+
+    // 🔥 Dynamic Epic Success Animation Generator 🔥
+    function showEpicSuccessAnimation(movieName) {
+        // 1. Create the Popup element dynamically
+        const successBox = document.createElement('div');
+        successBox.innerHTML = `
+            <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); animation: epicFadeIn 0.3s ease;">
+                <div style="background: linear-gradient(135deg, #1a1a1a, #2a2a2a); padding: 40px 30px; border-radius: 20px; border: 2px solid #25D366; box-shadow: 0 0 30px rgba(37, 211, 102, 0.4); text-align: center; transform: scale(0); animation: epicPopUp 0.6s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275); max-width: 90%; width: 350px;">
+                    <i class="fas fa-check-circle" style="font-size: 5rem; color: #25D366; margin-bottom: 20px; text-shadow: 0 0 20px rgba(37,211,102,0.6);"></i>
+                    <h2 style="color: #fff; margin: 0; font-size: 1.8rem; font-family: 'Poppins', sans-serif;">Success!</h2>
+                    <p style="color: #d4af37; margin: 10px 0 5px 0; font-size: 1.1rem; font-weight: bold;">${movieName}</p>
+                    <p style="color: #bbb; margin: 0; font-size: 0.95rem;">has been added to the queue. 🍿</p>
+                </div>
+            </div>
+            <style>
+                @keyframes epicFadeIn { from { opacity: 0; } to { opacity: 1; } }
+                @keyframes epicPopUp { to { transform: scale(1); } }
+            </style>
+        `;
+        document.body.appendChild(successBox);
+
+        // 2. Epic Fireworks Confetti Sequence
+        if(typeof confetti === "function") {
+            var duration = 3000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10001 };
+
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#25D366', '#d4af37', '#ffffff'] }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#e50914', '#d4af37', '#ffffff'] }));
+            }, 250);
+        }
+
+        // 3. Remove popup smoothly after 3.5 seconds
+        setTimeout(() => {
+            successBox.firstElementChild.style.opacity = '0';
+            successBox.firstElementChild.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => successBox.remove(), 500);
+        }, 3500);
     }
 
     function initLiveRequests() {
