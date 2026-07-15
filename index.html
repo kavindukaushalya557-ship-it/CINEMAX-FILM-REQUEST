@@ -110,15 +110,21 @@
             <h2><i class="fas fa-edit"></i> Submit a Request</h2>
 
             <!-- 🔥 අලුතින් එකතු කරපු Request Rules කෑල්ල 🔥 -->
-            <div class="request-notice" style="background: rgba(229, 9, 20, 0.1); border-left: 4px solid #e50914; padding: 10px 15px; margin-bottom: 20px; border-radius: 4px; font-size: 0.85rem; color: var(--text-color);">
-                <p style="margin-bottom: 5px;"><strong>⚠️ Request Rules:</strong></p>
-                <ul style="margin-top: 5px; padding-left: 20px; list-style-type: square; opacity: 0.9;">
-                    <li>කරුණාකර ඉල්ලුම් කිරීමට පෙර අදාළ චිත්‍රපටය සඳහා අන්තර්ජාලය තුළ සිංහල උපසිරැසි නිකුත් වී ඇත්දැයි තහවුරු කරගන්න. (උදා: Baiscopelk, Cinesubz, Sinhalasub And More....).</li>
-                    <li>කොටස් (Episodes) 12 ට වඩා වැඩි කතා මාලා සඳහා පහත පරිදි ගාස්තු අය කෙරේ. (කොටස් 12 දක්වා නොමිලේ).<br>
-                        <span style="color: #d4af37; font-weight: bold; font-size: 0.8rem;">💳 Episodes 13-30: Rs.200 | 31-50: Rs.350 | 50න් ඉහළ: Rs.500+</span>
-                    </li>
-                </ul>
-            </div>
+           <details class="request-notice" style="background: rgba(229, 9, 20, 0.1); border-left: 4px solid #e50914; padding: 12px 15px; margin-bottom: 20px; border-radius: 4px; font-size: 0.85rem; color: var(--text-color); cursor: pointer; transition: 0.3s;">
+                
+                <summary style="font-weight: bold; outline: none; color: #ff4a52; user-select: none;">
+                    ⚠️ Request Rules & Pricing (Click to View)
+                </summary>
+                
+                <div style="margin-top: 10px; border-top: 1px dashed rgba(229,9,20,0.3); padding-top: 10px;">
+                    <ul style="margin: 0; padding-left: 20px; list-style-type: square; opacity: 0.9;">
+                        <li style="margin-bottom: 8px;">කරුණාකර ඉල්ලුම් කිරීමට පෙර අදාළ චිත්‍රපටය සඳහා අන්තර්ජාලය තුළ සිංහල උපසිරැසි නිකුත් වී ඇත්දැයි තහවුරු කරගන්න. (උදා: Baiscopelk, Cinesubz, Sinhalasub & more....).</li>
+                        <li>කොටස් (Episodes) 12 ට වඩා වැඩි කතා මාලා සඳහා පහත පරිදි ගාස්තු අය කෙරේ. (කොටස් 12 දක්වා නොමිලේ).<br>
+                            <span style="color: #d4af37; font-weight: bold; font-size: 0.8rem;">💳 Episodes 13-30: Rs.200 | 31-50: Rs.350 | 50න් ඉහළ: Rs.500+</span>
+                        </li>
+                    </ul>
+                </div>
+            </details>
 
             <form id="movieForm">
                 <div class="input-group">
