@@ -61,6 +61,25 @@ async function fetchPoster(movieName) {
     return PLACEHOLDER_POSTER.replace("Loading...", "No+Poster");
 }
 
+// 🔥 අලුත් වැඩකෑල්ල: Auto Sinhala Translator API 🔥
+async function translateToSinhala(text) {
+    if (!text) return "මෙම චිත්‍රපටය සඳහා විස්තරයක් හමුවුණේ නැත.";
+    try {
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=si&dt=t&q=${encodeURIComponent(text)}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        let translatedText = "";
+        data[0].forEach(item => {
+            if (item[0]) translatedText += item[0] + " ";
+        });
+        return translatedText.trim();
+    } catch (error) {
+        console.error("Translation Error:", error);
+        return text; // මොනවා හරි අවුලක් ගියොත් English එකම පෙන්වනවා
+    }
+}
+
 
 /** * ==========================================
  * 3. MODAL & GLOBAL ACTIONS
@@ -73,7 +92,7 @@ window.openMovieModal = async function(movieName) {
 
     modal.style.display = "flex";
     document.getElementById("modalTitle").innerText = movieName;
-    document.getElementById("modalPlot").innerText = "Searching for movie details...";
+    document.getElementById("modalPlot").innerHTML = "<i class='fas fa-spinner fa-spin'></i> තොරතුරු සොයමින් පවතී...";
     document.getElementById("modalRating").innerText = "-";
     document.getElementById("modalPoster").src = PLACEHOLDER_POSTER;
     document.getElementById("modalTrailer").src = ""; 
@@ -84,7 +103,25 @@ window.openMovieModal = async function(movieName) {
         const movie = searchData.results[0];
         const mediaType = movie.media_type || "movie";
         
-        document.getElementById("modalPlot").innerText = movie.overview || "No synopsis available for this title.";
+        // 🔥 ඉංග්‍රීසි කතාව අරගෙන සිංහලට Translate කරලා පෙන්වීම 🔥
+        const englishPlot = movie.overview || "";
+        if (englishPlot) {
+            document.getElementById("modalPlot").innerHTML = "<i class='fas fa-language'></i> සිංහලට පරිවර්තනය වෙමින් පවතී... ⏳";
+            
+            // Translate වෙනකන් ඉන්නවා
+            const sinhalaPlot = await translateToSinhala(englishPlot);
+            
+            // ලස්සන කොටුවක් ඇතුළේ සිංහල විස්තරේ දානවා
+            document.getElementById("modalPlot").innerHTML = `
+                <div style="background: rgba(229,9,20,0.1); padding: 15px; border-left: 4px solid #e50914; border-radius: 8px; margin-top: 10px;">
+                    <strong style="color: #d4af37; font-size: 1.05rem;"><i class="fas fa-book-open"></i> කතාවේ සාරාංශය:</strong><br>
+                    <span style="color: #ddd; line-height: 1.7; display: block; margin-top: 8px; font-size: 0.95rem;">${sinhalaPlot}</span>
+                </div>
+            `;
+        } else {
+            document.getElementById("modalPlot").innerHTML = `<span style="color: #bbb;">මෙම චිත්‍රපටය සඳහා විස්තරයක් හමුවුණේ නැත.</span>`;
+        }
+
         document.getElementById("modalRating").innerText = movie.vote_average ? movie.vote_average.toFixed(1) : "N/A";
         
         if (movie.poster_path) {
@@ -368,7 +405,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // 🔥 Modified Form Submit with Epic Success Animation 🔥
     function initFormSubmit() {
         const movieForm = document.getElementById('movieForm');
         if (!movieForm) return;
@@ -378,7 +414,6 @@ document.addEventListener("DOMContentLoaded", function() {
             const submitBtn = document.querySelector('.btn-submit');
             const originalText = submitBtn.innerHTML;
             
-            // Checking Message
             submitBtn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Checking Data...";
 
             try {
@@ -389,7 +424,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 const year = document.getElementById('year').value;
                 const requestType = document.getElementById('requestType') ? document.getElementById('requestType').value : 'movie';
 
-                // 🔥 Duplicate & Spam Check Logic 🔥
                 if (requestType === "movie") {
                     const checkSnapshot = await db.collection('requests').where('movieName', '==', movieName).get();
                     let isRecentlyCompleted = false;
@@ -424,7 +458,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 }
 
-                // Paid TV Series Logic
                 if (requestType === "paid_tv") {
                      const waMessage = `ආයුබෝවන්, මට මේ TV Series එක Buy කරන්න ඕනේ. 📺\n\n*Name:* ${movieName}\n*Language:* ${language}\n*Year:* ${year}\n*My Name:* ${fullName || "Not Provided"}\n*WhatsApp Number:* ${waNumber}\n\n💳 *දැනුවත් වීමට:*\n• Episodes 13-30: Rs. 200\n• Episodes 31-50: Rs. 350\n• Episodes 50+: Rs. 500+`;
                     const waUrl = `https://wa.me/94760595208?text=${encodeURIComponent(waMessage)}`;
@@ -442,7 +475,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 submitBtn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Submitting...";
 
-                // Save to Firebase 
                 await db.collection('requests').add({
                     fullName: fullName,
                     waNumber: waNumber,
@@ -454,7 +486,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                // 🔥 අලුත් Epic Success Animation එක මෙතනින් පටන් ගන්නවා 🔥
                 showEpicSuccessAnimation(movieName);
 
                 movieForm.reset();
@@ -473,9 +504,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // 🔥 Dynamic Epic Success Animation Generator 🔥
     function showEpicSuccessAnimation(movieName) {
-        // 1. Create the Popup element dynamically
         const successBox = document.createElement('div');
         successBox.innerHTML = `
             <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); animation: epicFadeIn 0.3s ease;">
@@ -493,7 +522,6 @@ document.addEventListener("DOMContentLoaded", function() {
         `;
         document.body.appendChild(successBox);
 
-        // 2. Epic Fireworks Confetti Sequence
         if(typeof confetti === "function") {
             var duration = 3000;
             var animationEnd = Date.now() + duration;
@@ -510,7 +538,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }, 250);
         }
 
-        // 3. Remove popup smoothly after 3.5 seconds
         setTimeout(() => {
             successBox.firstElementChild.style.opacity = '0';
             successBox.firstElementChild.style.transition = 'opacity 0.5s ease';
