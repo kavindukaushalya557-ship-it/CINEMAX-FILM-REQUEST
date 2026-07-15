@@ -491,3 +491,50 @@ a, button, input, select, .ripple-element {
     /* Mobile එකේදී Back to top එක උඩට ගන්නවා overlap වෙන්නෙ නැති වෙන්න */
     #backToTop { bottom: 80px; right: 20px; } 
 }
+/* =======================================================
+   🔥 MOBILE VIEW FIX: 2 Cards Per Row for Movies 🔥
+======================================================= */
+@media (max-width: 768px) {
+    /* එක පේළියකට කාඩ්ස් 2ක් පෙන්වීමට */
+    .movie-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+    }
+    
+    /* කාඩ් එකේ උස ෆෝන් එකට ගැලපෙන්න හැදීම */
+    .movie-card {
+        height: 220px !important;
+        border-radius: 12px;
+    }
+    
+    /* ඉඩ මදි නිසා Padding ටිකක් අඩු කිරීම */
+    .movie-info {
+        padding: 10px 8px !important;
+    }
+    
+    /* ෆිල්ම් එකේ නම දිග වැඩියි නම් "..." විදිහට කපලා දැමීම */
+    .movie-info h3 {
+        font-size: 0.9rem !important;
+        margin-bottom: 2px !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+    }
+    
+    .movie-info p {
+        font-size: 0.7rem !important;
+        margin-bottom: 6px !important;
+    }
+    
+    /* Status Button එක (Pending/Completed) ෆෝන් එකට ගැලපෙන්න කුඩා කිරීම */
+    .status {
+        font-size: 0.65rem !important;
+        padding: 3px 8px !important;
+    }
+    
+    /* Skeleton (Loading) Animation එකේ උසත් සමාන කිරීම */
+    .skeleton-card {
+        height: 220px !important;
+    }
+}
