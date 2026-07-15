@@ -36,7 +36,7 @@ window.showToast = function(message) {
     if (toast) {
         toast.innerText = message;
         toast.classList.add("show");
-        setTimeout(() => toast.classList.remove("show"), 3500);
+        setTimeout(() => toast.classList.remove("show"), 4000); // වෙලාව ටිකක් වැඩි කළා මැසේජ් එක කියවන්න
     }
 };
 
@@ -71,7 +71,6 @@ window.openMovieModal = async function(movieName) {
     const modal = document.getElementById("movieModal");
     if (!modal) return;
 
-    // Set Loading State
     modal.style.display = "flex";
     document.getElementById("modalTitle").innerText = movieName;
     document.getElementById("modalPlot").innerText = "Searching for movie details...";
@@ -79,7 +78,6 @@ window.openMovieModal = async function(movieName) {
     document.getElementById("modalPoster").src = PLACEHOLDER_POSTER;
     document.getElementById("modalTrailer").src = ""; 
 
-    // Fetch Details
     const searchData = await fetchTMDB(`/search/multi?query=${encodeURIComponent(movieName)}`);
     
     if (searchData?.results?.length > 0) {
@@ -93,7 +91,6 @@ window.openMovieModal = async function(movieName) {
             document.getElementById("modalPoster").src = `${IMG_BASE_URL}/w500${movie.poster_path}`;
         }
 
-        // Fetch Trailer
         const videoData = await fetchTMDB(`/${mediaType}/${movie.id}/videos?`);
         if (videoData?.results?.length > 0) {
             const trailer = videoData.results.find(v => v.type === "Trailer" && v.site === "YouTube") 
@@ -111,7 +108,7 @@ window.closeModal = function() {
     const modal = document.getElementById("movieModal");
     const trailer = document.getElementById("modalTrailer");
     if (modal) modal.style.display = "none";
-    if (trailer) trailer.src = ""; // Stop video playback
+    if (trailer) trailer.src = ""; 
 };
 
 
@@ -135,17 +132,11 @@ document.addEventListener("DOMContentLoaded", function() {
     initBackToTop();
     initModalEvents();
     
-    // පරණ එකතු කරපු වැඩකෑලි
     initVoiceSearch();
     initTicketDownload();
-    
-    // 🔥 අලුතින් එකතු කරපු Phone UI වැඩකෑලි 🔥
     initRippleEffect();
     initMobileFAB();
 
-    // --- Sub-functions for cleaner initialization ---
-
-    // 🔥 Voice Search AI Feature 🔥
     function initVoiceSearch() {
         const micBtn = document.getElementById("micBtn");
         const movieInput = document.getElementById("movieName");
@@ -184,7 +175,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // 🔥 Cinema Ticket Generation Download 🔥
     function initTicketDownload() {
         const downloadBtn = document.getElementById('downloadTicketBtn');
         const closeTicketBtn = document.querySelector('.close-ticket-btn');
@@ -211,7 +201,6 @@ document.addEventListener("DOMContentLoaded", function() {
     function initThemeToggle() {
         const themeToggle = document.getElementById("themeToggle");
         if (!themeToggle) return;
-        
         if (localStorage.getItem("theme") === "light") {
             document.body.classList.add("light-mode");
             themeToggle.innerText = "🌙";
@@ -312,7 +301,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // 🔥 AutoSuggest with Episode Count Logic 🔥
     function initAutoSuggest() {
         const movieNameInput = document.getElementById("movieName");
         const suggestionsList = document.getElementById("suggestionsList");
@@ -369,12 +357,9 @@ document.addEventListener("DOMContentLoaded", function() {
                             
                             if (item.media_type === 'tv' && reqTypeDropdown) {
                                 window.showToast("⏳ Checking episodes limit...");
-                                
                                 const tvDetails = await fetchTMDB(`/tv/${item.id}?`);
-                                
                                 if (tvDetails && tvDetails.number_of_episodes) {
                                     const epCount = tvDetails.number_of_episodes;
-                                    
                                     if (epCount > 12) {
                                         reqTypeDropdown.value = "paid_tv"; 
                                         window.showToast(`⚠️ Episodes ${epCount} ක් තියෙනවා! (Premium Series)`);
@@ -382,7 +367,6 @@ document.addEventListener("DOMContentLoaded", function() {
                                         reqTypeDropdown.value = "movie"; 
                                         window.showToast(`✅ Episodes ${epCount} යි! (Free Series)`);
                                     }
-                                    
                                     reqTypeDropdown.disabled = true;
                                     reqTypeDropdown.style.opacity = "0.7";
                                 }
@@ -408,6 +392,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // 🔥 Modified Form Submit with Duplicate & Spam Check 🔥
     function initFormSubmit() {
         const movieForm = document.getElementById('movieForm');
         if (!movieForm) return;
@@ -416,18 +401,57 @@ document.addEventListener("DOMContentLoaded", function() {
             e.preventDefault();
             const submitBtn = document.querySelector('.btn-submit');
             const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Submitting...";
+            
+            // Checking Message
+            submitBtn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Checking Data...";
 
             try {
-                // Get Field Values
                 const fullName = document.getElementById('fullName').value;
                 const waNumber = document.getElementById('waNumber').value;
-                const movieName = document.getElementById('movieName').value;
+                const movieName = document.getElementById('movieName').value.trim(); // Trim extra spaces
                 const language = document.getElementById('language').value;
                 const year = document.getElementById('year').value;
                 const requestType = document.getElementById('requestType') ? document.getElementById('requestType').value : 'movie';
 
-                // 🔥 Logic 1: If "Paid TV Series" is selected, route directly to WhatsApp 🔥
+                // 🔥 1. Duplicate & Spam Check Logic (දවස් 7ක් ඇතුළත දාලද බලනවා) 🔥
+                if (requestType === "movie") {
+                    const checkSnapshot = await db.collection('requests').where('movieName', '==', movieName).get();
+                    let isRecentlyCompleted = false;
+                    let isPending = false;
+
+                    const sevenDaysAgo = new Date();
+                    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7); // අදින් දවස් 7කට කලින් දවස හදනවා
+
+                    checkSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        
+                        // Status එක Completed නම්, දවස් 7ක් ඇතුළතද බලනවා
+                        if (data.status === 'completed') {
+                            const docDate = data.timestamp ? data.timestamp.toDate() : new Date(0);
+                            if (docDate >= sevenDaysAgo) {
+                                isRecentlyCompleted = true;
+                            }
+                        } 
+                        // Status එක Pending නම්, කෙනෙක් දැනටමත් ඉල්ලලා තියෙන්නේ
+                        else if (data.status === 'pending') {
+                            isPending = true;
+                        }
+                    });
+
+                    if (isRecentlyCompleted) {
+                        window.showToast("⚠️ මේ ෆිල්ම් එක පසුගිය දින 7 ඇතුළත Group එකට දාලා තියෙන්නේ! කරුණාකර Group එකේ Search කරන්න.");
+                        submitBtn.innerHTML = originalText;
+                        return; // මෙතනින් නවත්තනවා (Database එකට යන්නෙ නෑ)
+                    }
+                    
+                    if (isPending) {
+                        window.showToast("⏳ මේ ෆිල්ම් එක දැනටමත් කෙනෙක් ඉල්ලලා තියෙන්නේ. අපි ඉක්මනින් Group එකට දානවා!");
+                        submitBtn.innerHTML = originalText;
+                        return; // මෙතනින් නවත්තනවා
+                    }
+                }
+
+                // 2. Paid TV Series Logic
                 if (requestType === "paid_tv") {
                      const waMessage = `ආයුබෝවන්, මට මේ TV Series එක Buy කරන්න ඕනේ. 📺\n\n*Name:* ${movieName}\n*Language:* ${language}\n*Year:* ${year}\n*My Name:* ${fullName || "Not Provided"}\n*WhatsApp Number:* ${waNumber}\n\n💳 *දැනුවත් වීමට:*\n• Episodes 13-30: Rs. 200\n• Episodes 31-50: Rs. 350\n• Episodes 50+: Rs. 500+`;
                     const waUrl = `https://wa.me/94760595208?text=${encodeURIComponent(waMessage)}`;
@@ -443,7 +467,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     return; 
                 }
 
-                // 🔥 Logic 2: If "Movie/Free Series", save to Firebase 🔥
+                // Submitting Text
+                submitBtn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Submitting...";
+
+                // 3. Save to Firebase 
                 await db.collection('requests').add({
                     fullName: fullName,
                     waNumber: waNumber,
@@ -457,7 +484,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 window.showToast("✅ Request Submitted Successfully!");
                 
-                // 🔥 පෝම් එක සබ්මිට් කරපු ගමන් Ticket එක පෙන්වීම 🔥
+                // Show Ticket Modal
                 const tMovie = document.getElementById('t-movie');
                 const tName = document.getElementById('t-name');
                 const tDate = document.getElementById('t-date');
@@ -616,7 +643,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // 🔥 1. App-like Touch Ripple Effect Logic 🔥
     function initRippleEffect() {
         document.querySelectorAll('.ripple-element').forEach(btn => {
             btn.addEventListener('click', function(e) {
@@ -636,7 +662,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // 🔥 2. Mobile Bottom Button Smart Hide/Show Logic 🔥
     function initMobileFAB() {
         window.addEventListener('scroll', () => {
             const fab = document.getElementById('mobileFab');
@@ -645,17 +670,14 @@ document.addEventListener("DOMContentLoaded", function() {
             
             const formRect = form.getBoundingClientRect();
             
-            // ෆෝන් එකෙන් බලද්දි විතරක් මේක වැඩ කරන්නේ (Width < 768px)
             if(window.innerWidth <= 768) {
-                // යූසර් දැනටමත් Form එක දිහා බලන් ඉන්නවා නම්, Floating බටන් එක හංගනවා
                 if (formRect.top < window.innerHeight && formRect.bottom > 0) {
                     fab.style.display = 'none'; 
                 } else {
-                    // Form එක පේන්නේ නැත්නම් (පල්ලෙහාට ගිහින් නම්) බටන් එක පෙන්වනවා
                     fab.style.display = 'flex'; 
                 }
             } else {
-                fab.style.display = 'none'; // PC එකෙන් බලද්දි හැමතිස්සෙම හංගනවා
+                fab.style.display = 'none'; 
             }
         });
     }
