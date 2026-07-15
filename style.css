@@ -497,7 +497,7 @@ a, button, input, select, .ripple-element {
 @media (max-width: 768px) {
     /* එක පේළියකට කාඩ්ස් 2ක් පෙන්වීමට */
     .movie-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-columns: repeat(3, 1fr) !important;
         gap: 12px !important;
     }
     
