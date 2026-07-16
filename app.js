@@ -86,6 +86,7 @@ async function translateToSinhala(text) {
  * ==========================================
  */
 
+// 🔥 අලුත් Premium TMDB Modal Function එක 🔥
 window.openMovieModal = async function(movieName) {
     const modal = document.getElementById("movieModal");
     if (!modal) return;
@@ -93,8 +94,15 @@ window.openMovieModal = async function(movieName) {
     modal.style.display = "flex";
     document.getElementById("modalTitle").innerText = movieName;
     document.getElementById("modalPlot").innerHTML = "<i class='fas fa-spinner fa-spin'></i> තොරතුරු සොයමින් පවතී...";
-    document.getElementById("modalRating").innerText = "-";
-    document.getElementById("modalPoster").src = PLACEHOLDER_POSTER;
+    document.getElementById("modalRating").innerHTML = '<i class="fas fa-star"></i> -/10';
+    
+    // Clear old data
+    document.getElementById("modalYear").innerText = "YYYY";
+    document.getElementById("modalRuntime").innerText = "-- min";
+    document.getElementById("modalGenres").innerHTML = "";
+    document.getElementById("modalDirector").innerText = "-";
+    document.getElementById("modalCast").innerHTML = "";
+    document.getElementById("modalBackdrop").style.backgroundImage = "none";
     document.getElementById("modalTrailer").src = ""; 
 
     const searchData = await fetchTMDB(`/search/multi?query=${encodeURIComponent(movieName)}`);
@@ -103,15 +111,64 @@ window.openMovieModal = async function(movieName) {
         const movie = searchData.results[0];
         const mediaType = movie.media_type || "movie";
         
-        // 🔥 Sinhala Translation for Plot 🔥
+        // 🔥 එක පාරම ෆිල්ම් එකේ ඔක්කොම විස්තර (Cast, Video) ගන්නවා 🔥
+        const fullDetails = await fetchTMDB(`/${mediaType}/${movie.id}?append_to_response=credits,videos`);
+        
+        if(fullDetails) {
+            // Background Image (Backdrop)
+            if(fullDetails.backdrop_path) {
+                document.getElementById("modalBackdrop").style.backgroundImage = `url('${IMG_BASE_URL}/original${fullDetails.backdrop_path}')`;
+            }
+
+            // Rating, Year, Runtime
+            document.getElementById("modalRating").innerHTML = `<i class="fas fa-star"></i> ${fullDetails.vote_average ? fullDetails.vote_average.toFixed(1) : "N/A"}/10`;
+            const releaseDate = fullDetails.release_date || fullDetails.first_air_date || "";
+            document.getElementById("modalYear").innerText = releaseDate ? releaseDate.split("-")[0] : "N/A";
+            document.getElementById("modalRuntime").innerText = fullDetails.runtime ? `${fullDetails.runtime} min` : (fullDetails.episode_run_time?.length ? `${fullDetails.episode_run_time[0]} min` : "N/A");
+
+            // Genres (Categories)
+            if(fullDetails.genres) {
+                document.getElementById("modalGenres").innerHTML = fullDetails.genres.map(g => `<span class="genre-pill">${g.name}</span>`).join('');
+            }
+
+            // Director
+            const crew = fullDetails.credits?.crew || [];
+            const director = crew.find(c => c.job === "Director" || c.job === "Executive Producer");
+            document.getElementById("modalDirector").innerText = director ? director.name : "N/A";
+
+            // Cast (නළු නිළියන්)
+            const cast = fullDetails.credits?.cast || [];
+            if(cast.length > 0) {
+                document.getElementById("modalCast").innerHTML = cast.slice(0, 8).map(actor => {
+                    const img = actor.profile_path ? `${IMG_BASE_URL}/w185${actor.profile_path}` : 'https://placehold.co/65x65/222/d4af37?text=User';
+                    return `<div class="cast-card"><img src="${img}" alt="${actor.name}"><span>${actor.name}</span></div>`;
+                }).join('');
+            } else {
+                document.getElementById("modalCast").innerHTML = "<span style='color:#bbb;'>No cast info available.</span>";
+            }
+
+            // Trailer
+            const videos = fullDetails.videos?.results || [];
+            const trailer = videos.find(v => v.type === "Trailer" && v.site === "YouTube") || videos.find(v => v.site === "YouTube");
+            if (trailer) {
+                document.getElementById("modalTrailer").src = `https://www.youtube.com/embed/${trailer.key}?autoplay=1&mute=0`;
+            }
+
+            // Share Buttons Functionality
+            const siteUrl = window.location.href;
+            const shareText = `🎬 Check out "${movieName}" on CINEMAX HD!\nRequest your favorite movies now 👇\n${siteUrl}`;
+            
+            document.getElementById("shareWA").onclick = () => window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
+            document.getElementById("shareTG").onclick = () => window.open(`https://t.me/share/url?url=${encodeURIComponent(siteUrl)}&text=${encodeURIComponent(`🎬 Request ${movieName} on CINEMAX HD!`)}`, '_blank');
+        }
+
+        // Sinhala Auto Translation
         const englishPlot = movie.overview || "";
         if (englishPlot) {
             document.getElementById("modalPlot").innerHTML = "<i class='fas fa-language'></i> සිංහලට පරිවර්තනය වෙමින් පවතී... ⏳";
-            
             const sinhalaPlot = await translateToSinhala(englishPlot);
-            
             document.getElementById("modalPlot").innerHTML = `
-                <div style="background: rgba(229,9,20,0.1); padding: 15px; border-left: 4px solid #e50914; border-radius: 8px; margin-top: 10px;">
+                <div style="background: rgba(229,9,20,0.1); padding: 15px; border-left: 4px solid #e50914; border-radius: 8px; margin-top: 15px;">
                     <strong style="color: #d4af37; font-size: 1.05rem;"><i class="fas fa-book-open"></i> කතාවේ සාරාංශය:</strong><br>
                     <span style="color: #ddd; line-height: 1.7; display: block; margin-top: 8px; font-size: 0.95rem;">${sinhalaPlot}</span>
                 </div>
@@ -120,20 +177,6 @@ window.openMovieModal = async function(movieName) {
             document.getElementById("modalPlot").innerHTML = `<span style="color: #bbb;">මෙම චිත්‍රපටය සඳහා විස්තරයක් හමුවුණේ නැත.</span>`;
         }
 
-        document.getElementById("modalRating").innerText = movie.vote_average ? movie.vote_average.toFixed(1) : "N/A";
-        
-        if (movie.poster_path) {
-            document.getElementById("modalPoster").src = `${IMG_BASE_URL}/w500${movie.poster_path}`;
-        }
-
-        const videoData = await fetchTMDB(`/${mediaType}/${movie.id}/videos?`);
-        if (videoData?.results?.length > 0) {
-            const trailer = videoData.results.find(v => v.type === "Trailer" && v.site === "YouTube") 
-                         || videoData.results.find(v => v.site === "YouTube");
-            if (trailer) {
-                document.getElementById("modalTrailer").src = `https://www.youtube.com/embed/${trailer.key}?autoplay=1`;
-            }
-        }
     } else {
         document.getElementById("modalPlot").innerText = "No details found for this title.";
     }
@@ -170,7 +213,6 @@ document.addEventListener("DOMContentLoaded", function() {
     initRippleEffect();
     initMobileFAB();
     
-    // 🔥 අලුත් Function එක මෙතන කෝල් කරනවා 🔥
     initHeroAndTrending();
 
     // ====================================================
@@ -181,13 +223,11 @@ document.addEventListener("DOMContentLoaded", function() {
         const trendingSlider = document.getElementById('trendingSlider');
         if (!heroBanner || !trendingSlider) return;
 
-        // TMDB එකෙන් අද දවසේ Trending Movies ටික ගන්නවා
         const data = await fetchTMDB('/trending/movie/day?language=en-US');
         
         if (data && data.results && data.results.length > 0) {
             const movies = data.results;
             
-            // Hero Banner එක හැදීම (පළවෙනි ෆිල්ම් එකෙන්)
             const heroMovie = movies[0];
             const backdropUrl = `https://image.tmdb.org/t/p/original${heroMovie.backdrop_path}`;
             const safeHeroName = (heroMovie.title || heroMovie.name).replace(/'/g, "&apos;");
@@ -198,7 +238,6 @@ document.addEventListener("DOMContentLoaded", function() {
             
             document.getElementById('heroInfoBtn').onclick = () => window.openMovieModal(safeHeroName);
 
-            // Trending Slider එක හැදීම (ඉතිරි ෆිල්ම්ස් වලින්)
             trendingSlider.innerHTML = "";
             movies.slice(1, 15).forEach(movie => {
                 const title = movie.title || movie.name;
