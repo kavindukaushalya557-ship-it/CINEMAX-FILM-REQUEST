@@ -784,3 +784,117 @@ a, button, input, select, .ripple-element {
     .hero-content p { font-size: 0.9rem; }
     .slider-card { flex: 0 0 140px; height: 210px; }
 }
+/* =======================================================
+   🔥 PREMIUM MOVIE MODAL (STEP 2) 🔥
+======================================================= */
+.premium-modal {
+    padding: 0 !important;
+    overflow: hidden;
+    max-width: 800px !important;
+    background: #141414 !important;
+    border: 1px solid var(--glass-border);
+}
+.modal-hero {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    background-size: cover;
+    background-position: center top;
+}
+.modal-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, #141414 0%, transparent 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+.trailer-container {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    border-radius: 0;
+    margin-top: 0;
+}
+.modal-body-content {
+    padding: 20px 30px 30px;
+    position: relative;
+    z-index: 3;
+    margin-top: -80px; /* Trailer එකට උඩින් විස්තරේ පේන්න */
+}
+.modal-header-info h2 {
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.9);
+    font-weight: 800;
+}
+.modal-meta {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+.rating-badge { color: #d4af37; font-weight: bold; }
+.meta-tag { color: #aaa; font-size: 0.95rem; }
+.modal-genres {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+.genre-pill {
+    background: rgba(255,255,255,0.15);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #fff;
+    backdrop-filter: blur(5px);
+}
+.modal-crew {
+    margin-top: 20px;
+    border-top: 1px dashed rgba(255,255,255,0.2);
+    padding-top: 15px;
+}
+.cast-list {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 15px 0 5px 0;
+    -webkit-overflow-scrolling: touch;
+}
+.cast-list::-webkit-scrollbar { height: 5px; }
+.cast-list::-webkit-scrollbar-thumb { background: #555; border-radius: 5px; }
+
+.cast-card { text-align: center; min-width: 75px; }
+.cast-card img {
+    width: 65px; height: 65px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 5px;
+    border: 2px solid transparent;
+    transition: 0.3s;
+}
+.cast-card:hover img { border-color: var(--primary-red); transform: scale(1.1); }
+.cast-card span {
+    display: block; font-size: 0.75rem; color: #ccc;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 75px;
+}
+
+.modal-actions { display: flex; gap: 15px; margin-top: 25px; }
+.btn-share {
+    flex: 1; padding: 12px; border: none; border-radius: 8px;
+    font-weight: bold; cursor: pointer; display: flex; justify-content: center;
+    align-items: center; gap: 8px; font-size: 1rem; color: white; transition: 0.3s;
+}
+.wa-share { background: #25D366; }
+.wa-share:hover { background: #1ebe57; transform: translateY(-2px); }
+.tg-share { background: #0088cc; }
+.tg-share:hover { background: #0077b5; transform: translateY(-2px); }
+
+/* Mobile Adjustments for Modal */
+@media (max-width: 768px) {
+    .modal-hero { height: 220px; }
+    .modal-header-info h2 { font-size: 1.6rem; }
+    .modal-body-content { padding: 15px; margin-top: -60px; }
+    .cast-card { min-width: 60px; }
+    .cast-card img { width: 55px; height: 55px; }
+}
