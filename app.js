@@ -61,7 +61,7 @@ async function fetchPoster(movieName) {
     return PLACEHOLDER_POSTER.replace("Loading...", "No+Poster");
 }
 
-// 🔥 අලුත් වැඩකෑල්ල: Auto Sinhala Translator API 🔥
+// 🔥 Auto Sinhala Translator API 🔥
 async function translateToSinhala(text) {
     if (!text) return "මෙම චිත්‍රපටය සඳහා විස්තරයක් හමුවුණේ නැත.";
     try {
@@ -76,7 +76,7 @@ async function translateToSinhala(text) {
         return translatedText.trim();
     } catch (error) {
         console.error("Translation Error:", error);
-        return text; // මොනවා හරි අවුලක් ගියොත් English එකම පෙන්වනවා
+        return text; 
     }
 }
 
@@ -103,15 +103,13 @@ window.openMovieModal = async function(movieName) {
         const movie = searchData.results[0];
         const mediaType = movie.media_type || "movie";
         
-        // 🔥 ඉංග්‍රීසි කතාව අරගෙන සිංහලට Translate කරලා පෙන්වීම 🔥
+        // 🔥 Sinhala Translation for Plot 🔥
         const englishPlot = movie.overview || "";
         if (englishPlot) {
             document.getElementById("modalPlot").innerHTML = "<i class='fas fa-language'></i> සිංහලට පරිවර්තනය වෙමින් පවතී... ⏳";
             
-            // Translate වෙනකන් ඉන්නවා
             const sinhalaPlot = await translateToSinhala(englishPlot);
             
-            // ලස්සන කොටුවක් ඇතුළේ සිංහල විස්තරේ දානවා
             document.getElementById("modalPlot").innerHTML = `
                 <div style="background: rgba(229,9,20,0.1); padding: 15px; border-left: 4px solid #e50914; border-radius: 8px; margin-top: 10px;">
                     <strong style="color: #d4af37; font-size: 1.05rem;"><i class="fas fa-book-open"></i> කතාවේ සාරාංශය:</strong><br>
@@ -168,10 +166,54 @@ document.addEventListener("DOMContentLoaded", function() {
     initFilters();
     initBackToTop();
     initModalEvents();
-    
     initVoiceSearch();
     initRippleEffect();
     initMobileFAB();
+    
+    // 🔥 අලුත් Function එක මෙතන කෝල් කරනවා 🔥
+    initHeroAndTrending();
+
+    // ====================================================
+    // 🔥 1. Netflix Style Hero Banner & Trending Slider 🔥
+    // ====================================================
+    async function initHeroAndTrending() {
+        const heroBanner = document.getElementById('heroBanner');
+        const trendingSlider = document.getElementById('trendingSlider');
+        if (!heroBanner || !trendingSlider) return;
+
+        // TMDB එකෙන් අද දවසේ Trending Movies ටික ගන්නවා
+        const data = await fetchTMDB('/trending/movie/day?language=en-US');
+        
+        if (data && data.results && data.results.length > 0) {
+            const movies = data.results;
+            
+            // Hero Banner එක හැදීම (පළවෙනි ෆිල්ම් එකෙන්)
+            const heroMovie = movies[0];
+            const backdropUrl = `https://image.tmdb.org/t/p/original${heroMovie.backdrop_path}`;
+            const safeHeroName = (heroMovie.title || heroMovie.name).replace(/'/g, "&apos;");
+            
+            heroBanner.style.backgroundImage = `url('${backdropUrl}')`;
+            document.getElementById('heroTitle').innerText = heroMovie.title || heroMovie.name;
+            document.getElementById('heroOverview').innerText = heroMovie.overview;
+            
+            document.getElementById('heroInfoBtn').onclick = () => window.openMovieModal(safeHeroName);
+
+            // Trending Slider එක හැදීම (ඉතිරි ෆිල්ම්ස් වලින්)
+            trendingSlider.innerHTML = "";
+            movies.slice(1, 15).forEach(movie => {
+                const title = movie.title || movie.name;
+                const safeTitle = title.replace(/'/g, "&apos;");
+                const posterUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : NO_IMG_POSTER;
+                
+                const card = document.createElement('div');
+                card.className = 'slider-card';
+                card.onclick = () => window.openMovieModal(safeTitle);
+                card.innerHTML = `<img src="${posterUrl}" alt="${title}" loading="lazy">`;
+                
+                trendingSlider.appendChild(card);
+            });
+        }
+    }
 
     function initVoiceSearch() {
         const micBtn = document.getElementById("micBtn");
