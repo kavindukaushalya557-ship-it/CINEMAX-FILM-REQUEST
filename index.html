@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CINEMAX HD - Movie Requests</title>
-    <!-- Google Fonts & Font Awesome Icons for Premium UI -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="https://fav.farm/🍿" />
 
-    <!-- 🔥 Ticket එකයි, Voice Search එකයි සහ අලුත් Mobile Design එකයි 🔥 -->
     <style>
         .input-wrapper { position: relative; display: flex; align-items: center; }
         .input-wrapper input { width: 100%; padding-right: 40px !important; }
@@ -69,48 +67,55 @@
 </head>
 <body>
 
-    <!-- 🔥 1. Custom Glowing Cursor 🔥 -->
     <div id="custom-cursor"></div>
 
-    <!-- 🔥 2. Theme Toggle Button 🔥 -->
     <button id="themeToggle" class="theme-btn ripple-element" title="Toggle Light/Dark Mode">☀️</button>
 
-    <!-- Preloader -->
     <div id="preloader">
         <div class="tech-loader"></div>
         <div class="loading-text">CINEMAX <span>HD</span></div>
     </div>
 
-    <!-- Live Ticker News Bar -->
     <div class="ticker-wrap">
         <div class="ticker">
             <i class="fas fa-fire text-danger"></i> Welcome to CINEMAX HD! Request your favorite Movies and TV Series now. <i class="fas fa-bolt"></i> Fast Uploads <i class="fas fa-bolt"></i> Sinhala Dubbed <i class="fas fa-bolt"></i> TV Series <i class="fas fa-bolt"></i> Exclusive Community. Enjoy the premium experience! 🍿
         </div>
     </div>
 
-    <!-- Background Cinematic Glow Effects -->
     <div class="bg-glow-red"></div>
     <div class="bg-glow-gold"></div>
     <div id="particles-container"></div>
     
-    <!-- Toast Alert Notification -->
     <div id="toast"><i class="fas fa-check-circle"></i> Request Submitted Successfully!</div>
 
-    <div class="container">
-        <!-- Hero Header Section -->
-        <header class="hero-section fade-up">
-            <h1 class="logo">CINEMAX <span>HD</span></h1>
-            <!-- 🔥 3. Auto Typing Text මෙතනට එනවා 🔥 -->
-            <p class="subtitle" id="typing-text"></p>
-            <a href="#requestForm" class="btn-primary ripple-element"><i class="fas fa-paper-plane"></i> Request Now</a>
-        </header>
+    <div id="heroBanner" class="hero-banner fade-up">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 id="heroTitle">Loading...</h1>
+            <p id="heroOverview">අලුත්ම චිත්‍රපට තොරතුරු සොයමින් පවතී...</p>
+            <div class="hero-buttons">
+                <a href="#requestForm" class="btn-primary ripple-element" style="text-decoration: none;"><i class="fas fa-paper-plane"></i> Request Now</a>
+                <button class="btn-secondary ripple-element" id="heroInfoBtn"><i class="fas fa-info-circle"></i> More Info</button>
+            </div>
+        </div>
+    </div>
 
-        <!-- Main Movie Request Form -->
+    <div class="slider-container fade-up">
+        <h2 class="slider-title"><i class="fas fa-fire" style="color: #e50914;"></i> Trending Now</h2>
+        <div class="movie-slider" id="trendingSlider">
+            <div class="skeleton-card" style="flex: 0 0 200px; height: 300px;"></div>
+            <div class="skeleton-card" style="flex: 0 0 200px; height: 300px;"></div>
+            <div class="skeleton-card" style="flex: 0 0 200px; height: 300px;"></div>
+            <div class="skeleton-card" style="flex: 0 0 200px; height: 300px;"></div>
+            <div class="skeleton-card" style="flex: 0 0 200px; height: 300px;"></div>
+        </div>
+    </div>
+
+    <div class="container">
         <section id="requestForm" class="glass-panel fade-up">
             <h2><i class="fas fa-edit"></i> Submit a Request</h2>
 
-            <!-- 🔥 අලුතින් එකතු කරපු Request Rules කෑල්ල 🔥 -->
-           <details class="request-notice" style="background: rgba(229, 9, 20, 0.1); border-left: 4px solid #e50914; padding: 12px 15px; margin-bottom: 20px; border-radius: 4px; font-size: 0.85rem; color: var(--text-color); cursor: pointer; transition: 0.3s;">
+            <details class="request-notice" style="background: rgba(229, 9, 20, 0.1); border-left: 4px solid #e50914; padding: 12px 15px; margin-bottom: 20px; border-radius: 4px; font-size: 0.85rem; color: var(--text-color); cursor: pointer; transition: 0.3s;">
                 
                 <summary style="font-weight: bold; outline: none; color: #ff4a52; user-select: none;">
                     ⚠️ Request Rules & Pricing (Click to View)
@@ -132,7 +137,6 @@
                     <input type="text" id="fullName" placeholder="Enter your name">
                 </div>
                 <div class="input-group">
-                    <!-- 🔥 WhatsApp Number Validation (ඉලක්කම් 10 සීමාව) එකතු කර ඇත 🔥 -->
                     <label><i class="fab fa-whatsapp"></i> WhatsApp Number *</label>
                     <input type="text" id="waNumber" required pattern="[0-9]{10}" maxlength="10" placeholder="07XXXXXXXX (ඉලක්කම් 10 පමණි)">
                 </div>
@@ -140,7 +144,6 @@
                 <div class="input-group" style="position: relative;">
                     <label><i class="fas fa-film"></i> Movie or TV Series Name *</label>
                     
-                    <!-- 🔥 අලුත් Voice Search මයික් එක මෙතන තියෙනවා 🔥 -->
                     <div class="input-wrapper">
                         <input type="text" id="movieName" required autocomplete="off" placeholder="e.g. Interstellar">
                         <i class="fas fa-microphone ripple-element" id="micBtn" title="කටහඬින් සෙවීමට ඔබන්න" style="border-radius: 50%; padding: 5px;"></i>
@@ -149,7 +152,6 @@
                     <ul id="suggestionsList" class="suggestions-list"></ul>
                 </div>
 
-                <!-- 🔥 අලුතින් එකතු කරපු Request Type Dropdown එක 🔥 -->
                 <div class="input-group">
                     <label><i class="fas fa-layer-group"></i> Request Type</label>
                     <select id="requestType">
@@ -173,12 +175,10 @@
                         <input type="number" id="year" placeholder="e.g. 2014">
                     </div>
                 </div>
-                <!-- 🔥 Ripple Effect එකයි Pulse Effect එකයි Submit බටන් එකට ඇඩ් කළා 🔥 -->
                 <button type="submit" class="btn-submit ripple-element"><i class="fas fa-paper-plane"></i> Submit Request</button>
             </form>
         </section>
 
-        <!-- Live Requests & Filters Area -->
         <section class="latest-movies fade-up">
             <h2 class="section-title"><i class="fas fa-play-circle"></i> Live Latest Requests</h2>
             <p style="text-align: center; color: var(--text-color); opacity: 0.8; margin-bottom:20px;">Real-time updates from our users!</p>
@@ -202,7 +202,6 @@
             </div>
         </section>
 
-        <!-- WhatsApp Community Links Matrix -->
         <section class="community-links fade-up">
             <h2 class="section-title"><i class="fas fa-users"></i> Join Our Community</h2>
             <div class="links-grid">
@@ -230,7 +229,6 @@
             </div>
         </section>
 
-        <!-- Live Statistics Counter -->
         <section class="stats-section fade-up">
             <div class="stats-grid">
                 <div class="stat-card glass-panel" data-tilt data-tilt-scale="1.05">
@@ -251,7 +249,6 @@
             </div>
         </section> 
 
-        <!-- Core Features Section -->
         <section class="features-section fade-up">
             <h2 class="section-title"><i class="fas fa-star"></i> Why CINEMAX HD?</h2>
             <div class="features-grid">
@@ -278,7 +275,6 @@
             </div>
         </section>
 
-        <!-- Footer Area -->
         <footer class="fade-up"> 
             <h3>CINEMAX HD</h3>
             <p>Owner: Mr. Kavindu Kaushalya</p>
@@ -286,15 +282,12 @@
         </footer>
     </div>
 
-    <!-- 🔥 අලුත් Mobile Floating Button එක (ෆෝන් වලට විතරක් පේනවා) 🔥 -->
     <a href="#requestForm" id="mobileFab" class="mobile-fab ripple-element">
         <i class="fas fa-video"></i> Request Movie
     </a>
 
-    <!-- Smooth Back To Top Button -->
     <button id="backToTop" title="Go to top" class="ripple-element"><i class="fas fa-chevron-up"></i></button>
 
-    <!-- TMDB Dynamic Movie Popup Modal -->
     <div id="movieModal" class="modal">
         <div class="modal-content glass-panel">
             <span class="close-btn">&times;</span>
@@ -312,7 +305,6 @@
         </div>
     </div>
 
-    <!-- 🔥 අලුත් Cinema Ticket Popup Modal එක 🔥 -->
     <div id="ticketModal" class="modal" style="z-index: 10000;">
         <div class="modal-content glass-panel" style="max-width: 400px; text-align: center; position: relative;">
             <span class="close-ticket-btn">&times;</span>
@@ -335,7 +327,6 @@
         </div>
     </div>
 
-    <!-- External Essential Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -343,7 +334,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="app.js"></script>
 
-    <!-- 🔥 App-like Touch Ripple & FAB Controller Script 🔥 -->
     <script>
         // 1. Touch Ripple Effect Logic
         document.querySelectorAll('.ripple-element').forEach(btn => {
